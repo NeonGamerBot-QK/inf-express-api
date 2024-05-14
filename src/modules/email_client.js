@@ -19,8 +19,8 @@ module.exports = class Email {
     this.body = raw.text
     // as of now dosent exist
     this.id = raw.messageId
-    const _this = this;
-    if(plugins) {
+    const _this = this
+    if (plugins) {
       plugins.forEach((plugin) => plugin.init(raw, _this))
     }
   }
