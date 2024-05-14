@@ -17,7 +17,7 @@ module.exports = class Email {
     this.to = raw.to
     this.subject = raw.subject
     this.body = raw.textPlain
-    this.id = raw.headers['message-id']
+    this.id = raw.metadata['message-id']
   }
   respond (text, ops = { reply: true, useText: false}) {
     const _this = this
