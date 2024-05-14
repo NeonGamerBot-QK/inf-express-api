@@ -18,7 +18,8 @@
     "keyv": "^4.5.4",
     "morgan": "^1.10.0",
     "nodemailer": "6.9.13",
-    "node-fetch": "cjs"
+    "node-fetch": "cjs",
+    "mailparser": "^3.7.1"
   },
   "optionalDependencies": {
     "@keyv/etcd": "^1.2.1",
