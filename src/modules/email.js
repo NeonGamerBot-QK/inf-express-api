@@ -18,7 +18,7 @@ module.exports = (config, cb) => async (req, res, next) => {
   req.isEmailRequest = isEmailRequest
   if (isEmailRequest) {
     req.email = await simpleParser(req.body.email.raw)
-    res.email_client = new EmailClient(req.email, config.email)
+    res.email_client = new EmailClient(req.email, config.email, config.plugins)
   }
   if (cb && typeof cb === 'function') {
     cb(req, res)

@@ -10,7 +10,7 @@ const config = {
   secure: false
 }
 module.exports = class Email {
-  constructor (raw, _email) {
+  constructor (raw, _email, plugins) {
     this._raw = raw
     this._email = _email
     this.from = raw.from
@@ -19,6 +19,10 @@ module.exports = class Email {
     this.body = raw.text
     // as of now dosent exist
     this.id = raw.messageId
+    const _this = this;
+    if(plugins) {
+      plugins.forEach((plugin) => plugin.init(raw, _this))
+    }
   }
   respond (text, ops = { reply: true, useText: false}) {
     const _this = this
