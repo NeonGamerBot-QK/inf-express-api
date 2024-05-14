@@ -1,7 +1,7 @@
 // handle n8n module parsing
 const EmailClient = require('./email_client')
 let debug = true
-const simpleParser = require('mailparser').simpleParser;
+const simpleParser = require('mailparser').simpleParser
 /**
  *
  * Body Should consit of {isValidEmailRequest:true, email:[...], stamp: "DATE:00000", workflow: [...] }
