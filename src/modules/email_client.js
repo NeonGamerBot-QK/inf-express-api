@@ -13,13 +13,13 @@ module.exports = class Email {
   constructor (raw, _email) {
     this._raw = raw
     this._email = _email
-    this.from = raw.headers.from
-    this.to = raw.headers.to
+    this.from = raw.from
+    this.to = raw.to
     this.subject = raw.subject
-    this.body = raw.text
-    this.id = raw.messageId
+    this.body = raw.textPlain
+    this.id = raw.headers['message-id']
   }
-  respond (text, ops = { reply: true }) {
+  respond (text, ops = { reply: true, useText: false}) {
     const _this = this
     return new Promise((res, reject) => {
       let _config = {...config}
@@ -40,7 +40,8 @@ module.exports = class Email {
         from: _this._email,
         to: ops.email || this.from,
         subject: ops.subject || 'Response',
-        html: text,
+        html: config.useText ? undefined : text,
+        text: config.useText ? text : undefined,
         inReplyTo: ops.reply !== false ? this.id : null,
         list: {
     // List-Help: <mailto:admin@example.com?subject=help>
