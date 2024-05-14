@@ -16,9 +16,9 @@ module.exports = class Email {
     this.from = raw.from.value[0].address
     this.to = raw.to.value[0].address
     this.subject = raw.subject
-    this.body = raw.text.
+    this.body = raw.text
     // as of now dosent exist
-    this.id = raw.messageId
+    .this.id = raw.messageId
     const _this = this
     if (plugins) {
       plugins.forEach((plugin) => plugin.init(raw, _this))
