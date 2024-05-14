@@ -40,7 +40,7 @@ function aiReq () {
 module.exports = (router, db) => {
   router.all('/', (req, res) => res.json('Hello, world!'))
   router.post('/email', EmailHandler({ mailsignkey: process.env.EMAIL_SIGN, email: 'smsbot@saahild.com', plugins: [new SmsPlugin() ]}), (req, res) => {
-console.log(req.email)
+    console.log(req.email)
     res.status(200).end()
   })
 }
