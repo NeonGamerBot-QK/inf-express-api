@@ -7,8 +7,9 @@ const EmailClient = require('./email_client')
  * @returns
  */
 module.exports = (config, cb) => (req, res, next) => {
+  console.log(req.method, req.headers['X-Mail-Header'], config)
   const isEmailRequest = req.method === 'POST' && req.body && req.body.isValidEmailRequest && req.headers['X-Mail-Header'] == config.mailsignkey
-  if (config.shallNotPassIfNotValid) {
+  if (config.shallNotPassIfNotValid && !isEmailRequest) {
     return res.status(400).json({ error: 'Not valid email signature, check ur body or auth.'})
   }
   req.isEmailRequest = isEmailRequest
