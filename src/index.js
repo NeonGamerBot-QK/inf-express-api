@@ -8,7 +8,7 @@ const fs = require('fs')
 const { exec } = require('child_process')
 const path = require('path')
 app.use(require('morgan')('dev'))
-app.use(express.json())
+app.use(express.json({ limit: '550mb'}))
 app.use(express.urlencoded({ extended: true }))
 app.use(require('helmet')())
 
