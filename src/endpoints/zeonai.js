@@ -37,8 +37,8 @@ function aiReq () {
   })
 }
 module.exports = (router, db) => {
-    router.all('/', (req,res) => res.json('Hello, world!'))
-    router.post('/email', EmailHandler({ mailsignkey: process.env.EMAIL_SIGN }), (req,res) => {
-        console.log(req.email)
-    })
+  router.all('/', (req, res) => res.json('Hello, world!'))
+  router.post('/email', EmailHandler({ mailsignkey: process.env.EMAIL_SIGN }), (req, res) => {
+    console.log(req.email)
+  })
 }
