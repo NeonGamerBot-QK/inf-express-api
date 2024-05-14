@@ -1,7 +1,7 @@
 // handle n8n module parsing
 const EmailClient = require('./email_client')
 let debug = false
-const simpleParser = require('mailparser').simpleParser
+// const simpleParser = require('mailparser').simpleParser
 /**
  *
  * Body Should consit of {isValidEmailRequest:true, email:[...], stamp: "DATE:00000", workflow: [...] }
@@ -17,7 +17,7 @@ module.exports = (config, cb) => async (req, res, next) => {
   }
   req.isEmailRequest = isEmailRequest
   if (isEmailRequest) {
-    req.email = await simpleParser(req.body.email.raw)
+    req.email = req.body.email
     res.email_client = new EmailClient(req.email, config.email, config.plugins)
   }
   if (cb && typeof cb === 'function') {

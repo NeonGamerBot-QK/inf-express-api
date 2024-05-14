@@ -13,10 +13,10 @@ module.exports = class Email {
   constructor (raw, _email, plugins) {
     this._raw = raw
     this._email = _email
-    this.from = raw.from
-    this.to = raw.to
+    this.from = raw.from.value[0].address
+    this.to = raw.to.value[0].address
     this.subject = raw.subject
-    this.body = raw.text
+    this.body = raw.text.
     // as of now dosent exist
     this.id = raw.messageId
     const _this = this
