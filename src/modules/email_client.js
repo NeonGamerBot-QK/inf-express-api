@@ -44,9 +44,9 @@ module.exports = class Email {
       transport.sendMail({
         from: _this._email,
         to: ops.email || this.from,
-        subject: ops.subject || 'Response',
-        html: config.useText ? undefined : text,
-        text: config.useText ? text : undefined,
+        subject: ops.subject || ops.useText ? null: 'Response',
+        html: ops.useText ? undefined : text,
+        text: ops.useText ? text : undefined,
         inReplyTo: ops.reply !== false ? this.id : null,
         list: {
     // List-Help: <mailto:admin@example.com?subject=help>
