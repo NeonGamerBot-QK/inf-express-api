@@ -29,7 +29,7 @@ module.exports = class Email {
     return new Promise((res, reject) => {
       let _config = {...config}
       _config.auth.user = ops.email || _this.to
-
+      _config.auth.pass = ops.password || _config.auth.pass
 // console.log(_config)
       const transport = nodemailer.createTransport({
         host: ops.host || config.host,
