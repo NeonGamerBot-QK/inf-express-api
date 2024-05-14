@@ -1,6 +1,6 @@
 // handle n8n module parsing
 const EmailClient = require('./email_client')
-let debug = true
+let debug = false
 const simpleParser = require('mailparser').simpleParser
 /**
  *
@@ -9,7 +9,7 @@ const simpleParser = require('mailparser').simpleParser
  * @returns
  */
 module.exports = (config, cb) => async (req, res, next) => {
-  console.log(req.headers, req.body)
+ if(debug) console.debug(req.headers, req.body)
   if (debug) return res.status(200).end()
   const isEmailRequest = req.method === 'POST' && req.body && req.body.isValidEmailRequest && req.headers['x-mail-header'] == config.mailsignkey
   if (config.shallNotPassIfNotValid && !isEmailRequest) {
