@@ -84,3 +84,22 @@ app.listen(port, () => {
         });
     }, 30000);
 })
+// watch for new git files
+
+setInterval(() => {
+    exec(`git pull`, (error, stdout) => {
+        let response = error || stdout;
+        if (!error) {
+            if (!response.includes("Already up to date.")) {
+                console.log(`New git stuff wowie`)
+                console.log(response)
+                // client.channels.cache
+                //     .get("898041843902742548")
+                //     .send(`<t:${Date.now().toString().slice(0, -3)}:f> Automatic update from GitHub, pulling files.\n\`\`\`${cap(response, 1900)}\`\`\``);
+                setTimeout(() => {
+                    process.exit();
+                }, 1000);
+            }
+        }
+    });
+}, 15000);
