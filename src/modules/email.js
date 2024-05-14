@@ -1,6 +1,6 @@
 // handle n8n module parsing
 const EmailClient = require('./email_client')
-let debug = false;
+let debug = false
 /**
  *
  * Body Should consit of {isValidEmailRequest:true, email:[...], stamp: "DATE:00000", workflow: [...] }
@@ -9,7 +9,7 @@ let debug = false;
  */
 module.exports = (config, cb) => (req, res, next) => {
   console.log(req.headers, req.body)
-  if(debug) return res.status(200).end()
+  if (debug) return res.status(200).end()
   const isEmailRequest = req.method === 'POST' && req.body && req.body.isValidEmailRequest && req.headers['x-mail-header'] == config.mailsignkey
   if (config.shallNotPassIfNotValid && !isEmailRequest) {
     return res.status(400).json({ error: 'Not valid email signature, check ur body or auth.'})
