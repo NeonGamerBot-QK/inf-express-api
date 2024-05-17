@@ -1,7 +1,7 @@
 const EmailHandler = require('../modules/email')
 const fetch = require('node-fetch')
 const SmsPlugin = require('../modules/plugin/sms')
-function aiReq () {
+function aiReq (prompt) {
   return new Promise((resolve, reject) => {
     var raw = JSON.stringify({
       'model': 'gemini-pro',
@@ -41,7 +41,9 @@ module.exports = (router, db) => {
   router.all('/', (req, res) => res.json('Hello, world!'))
   router.post('/email', EmailHandler({ mailsignkey: process.env.EMAIL_SIGN, email: 'smsbot@saahild.com', plugins: [new SmsPlugin() ]}), (req, res) => {
  //   console.log(req.email, res.email_client)
-    res.email_client.respond('please work: ' + res.email_client.body, {reply: false, useText: true, password: process.env.MAIL_PASSWORD_2 })
-    res.status(200).end()
+ aiReq(res.email_client.body).then((content) => {
+  res.email_client.respond(content, {reply: false, useText: true, password: process.env.MAIL_PASSWORD_2 })
+  res.status(200).end()
+ })   
   })
 }
