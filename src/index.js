@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const http = require('http')
 const app = express()
 const Keyv = require('keyv')
 const KeyvGzip = require('@keyv/compress-gzip')
@@ -7,11 +8,14 @@ const endpoints = new Map()
 const fs = require('fs')
 const { exec } = require('child_process')
 const path = require('path')
+const { randomUUID } = require('crypto')
+const server = http.createServer(app);
+const io = require('socket.io')(server);
 app.use(require('morgan')('dev'))
-app.use(express.json({ limit: '550mb'}))
+app.use(express.json({ limit: '550mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(require('helmet')())
-
+const cmds = new Map()
 // app.set('view engine', 'ejs')
 // app.set('views', path.join(__dirname, 'views'))
 app.get('/', (req, res) => {
@@ -32,6 +36,7 @@ for (const file of fs.readdirSync(path.join(__dirname, 'endpoints'))) {
 
   const db = new Keyv(process.env.DB_URI, { namespace: name })
   db.on('error', err => console.error(`[${name}] Connection error: ${err}`))
+  endpoint.db = db;
   const router = express()
   router.on('mount', () => {
     console.log(`[${file}] Endpoint ${name} mounted on /api/${name}`)
@@ -43,6 +48,9 @@ for (const file of fs.readdirSync(path.join(__dirname, 'endpoints'))) {
         // router.use()
     // run NON-async setup
   endpoint(router, db)
+  if(endpoint.socket_handle) {
+    cmds.set(name, endpoint)
+  }
   endpoints.set(name, {
     db, name, router, endpoint
   })
@@ -62,8 +70,29 @@ app.use((err, req, res, next) => {
     error: 'Internal server error'
   })
 })
+io.on('connection' , (socket) => {
+  const id = randomUUID().toString()
+  let connectedInTime = false;
+  socket.emit('route_query', JSON.stringify({ request: 'route', respond: 'route_response_' +id}))
+  socket.on('route_response_'+id, (route) => {
+    if(route && cmds.get(route)) {
+      connectedInTime = true;
+socket.emit('routed')
+cmds.get(route).socket_handle(socket, io, cmds.get(route).db)
+    } else {
+      socket.emit('route_unkown')
+      socket.disconnect()
+    }
+  })
+  setTimeout(() => {
+    if(!connectedInTime) {
+      socket.emit('route_timeout')
+      socket.disconnect()
+    }
+   })
+})
 const port = process.env.PORT || process.env.DEFAULT_PORT || process.env.SERVER_PORT || 3000
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server listening on port ::${port}`)
   setInterval(() => {
     exec(`git pull -v`, (error, stdout) => {

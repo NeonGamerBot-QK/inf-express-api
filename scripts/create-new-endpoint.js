@@ -22,6 +22,9 @@ async function processStdin(prompt) {
 module.exports = (router, db) => {
     router.all('/', (req,res) => res.send('Hello, world!'))
 }
+module.exports.socket_handle = socket => {
+socket.emit('hello world')
+}
 `);
 const uploadToGit = await processStdin('Do you want to upload this endpoint to git? (yes/no)');
 
