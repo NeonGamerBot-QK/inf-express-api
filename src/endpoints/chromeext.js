@@ -11,6 +11,7 @@ module.exports = (router, db) => {
 module.exports.socket_handle = (socket,io,db) => {
 (() => {
     let  clients = db.get('clients') || []
+    console.log(clients)
     clients.push({
         id: socket.id, 
     })
