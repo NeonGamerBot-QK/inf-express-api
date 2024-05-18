@@ -1,5 +1,8 @@
 // default template 
 module.exports = (router, db) => {
+    if(!Array.isArray(db.get('clients'))) {
+        db.set('clients', [])
+    }
    router.get('/', (req,res) => res.send(`Hi this is for my chrome extension`))
    router.get('/clients', (req,res) => {
     res.json(db.get('clients'))
