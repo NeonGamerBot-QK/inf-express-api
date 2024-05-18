@@ -10,7 +10,9 @@ const { exec } = require('child_process')
 const path = require('path')
 const { randomUUID } = require('crypto')
 const server = http.createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+cors: { origin: '*' }
+});
 app.use(require('morgan')('dev'))
 app.use(express.json({ limit: '550mb' }))
 app.use(express.urlencoded({ extended: true }))
