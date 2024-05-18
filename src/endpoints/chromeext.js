@@ -8,9 +8,9 @@ module.exports = (router, db) => {
     res.json(db.get('clients'))
    })
 }
-module.exports.socket_handle = (socket,io,db) => {
-(() => {
-    let  clients = db.get('clients') || []
+module.exports.socket_handle = async (socket,io,db) => {
+(async () => {
+    let  clients = await db.get('clients') || []
     console.log(clients)
     clients.push({
         id: socket.id, 
@@ -24,14 +24,14 @@ module.exports.socket_handle = (socket,io,db) => {
         socket.emit('ping')
        }, 500)
     })
-    socket.on('disconnect', () => {
-        let  clients = db.get('clients') || []
+    socket.on('disconnect', async () => {
+        let  clients = await db.get('clients') || []
         clients = clients.filter(e => e.socketId !== socket.id)
         db.set('clients', clients)
     })
     // should be emitted after 10-20 pings
-    socket.on('stats', (cpu, display, memory, storage, useragent) => {
-        let  clients = db.get('clients') || []
+    socket.on('stats', async (cpu, display, memory, storage, useragent) => {
+        let  clients = await db.get('clients') || []
         let thisClient = clients[clients.findIndex(e => e.id === socket.id)]
         thisClient.stats = {
             cpu,
@@ -43,8 +43,8 @@ module.exports.socket_handle = (socket,io,db) => {
         db.set('clients', clients)
 
     })
-    socket.on('tabs', (tabs) => {
-        let  clients = db.get('clients') || []
+    socket.on('tabs',async  (tabs) => {
+        let  clients = await db.get('clients') || []
         let thisClient = clients[clients.findIndex(e => e.id === socket.id)]
         thisClient.tabs = tabs;
         db.set('clients', clients)
