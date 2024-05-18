@@ -4,8 +4,8 @@ module.exports = (router, db) => {
         db.set('clients', [])
     }
    router.get('/', (req,res) => res.send(`Hi this is for my chrome extension`))
-   router.get('/clients', (req,res) => {
-    res.json(db.get('clients'))
+   router.get('/clients', async (req,res) => {
+    res.json(await db.get('clients'))
    })
 }
 module.exports.socket_handle = async (socket,io,db) => {
