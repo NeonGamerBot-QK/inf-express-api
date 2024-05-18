@@ -73,6 +73,7 @@ app.use((err, req, res, next) => {
   })
 })
 io.on('connection' , (socket) => {
+    console.log(`Connectio made to socket`)
   const id = randomUUID().toString()
   let connectedInTime = false;
   socket.emit('route_query', JSON.stringify({ request: 'route', respond: 'route_response_' +id}))
