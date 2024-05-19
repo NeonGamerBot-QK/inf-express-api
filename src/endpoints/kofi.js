@@ -2,6 +2,7 @@
 module.exports = (router, db) => {
     router.post('/webhook', (req,res) => {
         const body = JSON.parse(req.body.data)
+        console.log(body)
         // console.log(req.body)
         res.send(`200`)
     })
