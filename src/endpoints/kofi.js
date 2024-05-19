@@ -1,6 +1,6 @@
 // default template 
 module.exports = (router, db) => {
-    router.post('/upload', (req,res) => {
+    router.post('/webhook', (req,res) => {
         console.log(req.body)
         res.send(`200`)
     })
