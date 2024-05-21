@@ -20,7 +20,8 @@
     "nodemailer": "6.9.13",
     "node-fetch": "cjs",
     "mailparser": "^3.7.1",
-    "socket.io": "latest"
+    "socket.io": "latest",
+    "cors": "latest"
   },
   "optionalDependencies": {
     "@keyv/etcd": "^1.2.1",
