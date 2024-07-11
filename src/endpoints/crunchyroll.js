@@ -1,6 +1,6 @@
 const { rateLimit } = require('express-rate-limit').default
 
-// default template
+// default template 
 module.exports = (router, db) => {
     router.use(async (req,res,next) => {
         const visits = await db.get('visits') || 0
@@ -21,8 +21,8 @@ res.json(
     })
     router.post('/comments/:epid/:epname', rateLimit({ windowMs: 5000, limit: 3 }), async (req,res) => {
     const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
-    if (!userId) return res.status(400).json({ message: `User ID not found`})
-    if (userId.split('-').length < 3) return res.status(400).json({ message: `User ID invalid\nOnly use this application via crunchyroll`})
+    if(!userId) return res.status(400).json({ message: `User ID not found`})
+    if(userId.split('-').length < 3) return res.status(400).json({ message: `User ID invalid\nOnly use this application via crunchyroll`})
     const { user_data, content } = req.body
 const errors = []
 if(!user_data) errors.push("Missing Property 'user_data'")
@@ -40,8 +40,6 @@ comments.push({
 await db.set(`${req.params.epid}_${req.params.epname}`, comments)
 res.status(201).json({ message: "OK NEW" })
     })
-    db.set(`${req.params.epid}_${req.params.epname}`, comments)
-  })
 }
 // module.exports.socket_handle = (socket,io,db) => {
 //     socket.emit('ping')
