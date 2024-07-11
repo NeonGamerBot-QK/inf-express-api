@@ -29,6 +29,11 @@ if(!user_data) errors.push("Missing Property 'user_data'")
 if(!content) errors.push("Missing Property 'content'")
 if(typeof user_data !== 'object') errors.push("'user_data' is not an object")
     if(typeof content !== 'string') errors.push("'content' is not a string")
+    if(!user_data.name) errors.push("Missing 'user_data.name' ")
+    if(!user_data.avatar) errors.push("Missing 'user_data.avatar' ")
+    if(typeof user_data.name !== "string") errors.push("'user_data.name' is not a string")
+    if(typeof user_data.avatar !== "string") errors.push("'user_data.avatar' is not a string")
+if(!user_data.avatar.startsWith('https://')) errors.push(`Invalid avatar image.`)
         if(errors.length > 0) return res.status(403).json({ message: `Multiple errors found`, errors })
         const comments =     await db.get(`${req.params.epid}_${req.params.epname}`) || []
 comments.push({
