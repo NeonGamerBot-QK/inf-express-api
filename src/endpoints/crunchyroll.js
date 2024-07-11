@@ -29,7 +29,7 @@ if(!user_data) errors.push("Missing Property 'user_data'")
 if(!content) errors.push("Missing Property 'content'")
 if(typeof user_data !== 'object') errors.push("'user_data' is not an object")
     if(typeof content !== 'string') errors.push("'content' is not a string")
-        if(errors.length > 0) return res.json({ message: `Multiple errors found`, errors })
+        if(errors.length > 0) return res.status(403).json({ message: `Multiple errors found`, errors })
         const comments =     await db.get(`${req.params.epid}_${req.params.epname}`) || []
 comments.push({
     user_data, 
