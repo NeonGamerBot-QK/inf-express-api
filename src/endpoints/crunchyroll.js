@@ -37,9 +37,21 @@ result[key] = value;
 }
 res.json(result)
   })
-  router.post('/comments/:epid/:epname/:comment_id/like', defLimit, (req,res) => {
-// todo
-res.status(419).end()
+  router.post('/comments/:epid/:epname/:comment_id/like', defLimit, async (req,res) => {
+    const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
+    if (!userId) return res.status(400).json({ message: `User ID not found`})
+    if (userId.split('-').length < 3) return res.status(400).json({ message: `User ID invalid\nOnly use this application via crunchyroll`})
+      const id = req.query.id 
+    if(!id) return res.status(400).json({ message: `No Valid Message ID provided`})
+// const ep_data = await db.get(`${}`)
+    let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
+    const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
+    comments[theComment].likes++;
+    comments[theComment].user_who_liked.push(userId)
+    await db.set(`${req.params.epid}_${req.params.epname}`, comments)
+    res.status(200).json({ message: "Liked Comment"})
+    // todo
+// res.status(419).end()
   })
   router.get('/db/serialize', async (req,res) => {
     // remake db to make sure 
