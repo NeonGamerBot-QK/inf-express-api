@@ -19,12 +19,22 @@ module.exports = (router, db) => {
   const defLimit = rateLimit({ windowMs: 1000, limit: 2 })
   router.get('/comments/:epid/:epname', defLimit, async (req, res) => {
         // db.get(`${req.params.epid}_${req.params.epname}`)
+        const isAuthed = req.query.auth ==  process.env.CR_AUTH
     let result =     await db.get(`${req.params.epid}_${req.params.epname}`) || []
     result = result.map(i => {
-      delete i['userId']
+      if(!isAuthed) delete i['userId']
       return i
     })
         res.json(result)
+  })
+  router.get('/db/get_all', async (req,res) => {
+    const isAuthed = req.query.auth ==  process.env.CR_AUTH
+if(!isAuthed) res.status(401).end()
+const result = {}
+for await (let [key, value] of db.iterator()) {
+result[key] = value;
+}
+res.json(result)
   })
   router.post('/comments/:epid/:epname/:comment_id/like', defLimit, (req,res) => {
 // todo
