@@ -33,7 +33,7 @@ res.status(419).end()
   router.get('/db/serialize', async (req,res) => {
     // remake db to make sure 
     if(req.query.auth !== process.env.CR_AUTH) return res.status(401).json({ message: `No valid auth`})
-      for await (const [key, value] of db.iterator()) {
+      for await (let [key, value] of db.iterator()) {
         // console.log(key, value);
         const newBadges = [
 
@@ -61,6 +61,7 @@ res.status(419).end()
               badges: Array.isArray(item.badges) ? [...item.badges, ...newBadges] : newBadges
             }
           })
+          db.set(key, value)
         }
       };
   })
