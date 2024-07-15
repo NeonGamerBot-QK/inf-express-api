@@ -20,6 +20,7 @@ module.exports = (router, db) => {
   router.get('/comments/:epid/:epname', defLimit, async (req, res) => {
         // db.get(`${req.params.epid}_${req.params.epname}`)
         const isAuthed = req.query.auth ==  process.env.CR_AUTH
+      console.log(isAuthed)
     let result =     await db.get(`${req.params.epid}_${req.params.epname}`) || []
     result = result.map(i => {
       if(!isAuthed) delete i['userId']
@@ -29,7 +30,7 @@ module.exports = (router, db) => {
   })
   router.get('/db/get_all', async (req,res) => {
     const isAuthed = req.query.auth ==  process.env.CR_AUTH
-if(!isAuthed) res.status(401).end()
+if(!isAuthed) return res.status(401).end()
 const result = {}
 for await (let [key, value] of db.iterator()) {
 result[key] = value;
@@ -42,6 +43,8 @@ res.status(419).end()
   })
   router.get('/db/serialize', async (req,res) => {
     // remake db to make sure 
+    res.status(200)
+
     if(req.query.auth !== process.env.CR_AUTH) return res.status(401).json({ message: `No valid auth`})
       for await (let [key, value] of db.iterator()) {
         // console.log(key, value);
@@ -74,7 +77,8 @@ res.status(419).end()
           db.set(key, value)
         }
       };
-  })
+res.json({ ok:true })
+    })
   router.post('/comments/:epid/:epname', rateLimit({ windowMs: 5000, limit: 3 }), async (req, res) => {
     const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
     if (!userId) return res.status(400).json({ message: `User ID not found`})
