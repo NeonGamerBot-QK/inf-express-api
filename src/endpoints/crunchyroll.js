@@ -48,18 +48,21 @@ res.status(419).end()
     if(req.query.auth !== process.env.CR_AUTH) return res.status(401).json({ message: `No valid auth`})
       for await (let [key, value] of db.iterator()) {
         console.log(key, value);
-        const newBadges = [
-
-        ].filter(Boolean)
+      
         // lol why
 
         if(key.includes('_')) {
-          const item = value
-          if(item.created_at < experimentalEnd) newBadges.push({ name: "EXPERIMENTAL"})
-          if(item.created_at < betaEnd) newBadges.push({ name: "BETA" })
-          if(item.userId == process.env.CR_OWNER_ID) newBadges.push({ name: "OWNER" })
-          if(process.env.CR_DONOR_IDS && process.env.CR_DONOR_IDS.split(',').some(id => id == item.userId)) newBadges.push({ name: "DONOR" })
+          // const item = value
+          // console.log(item)
+ 
           value = value.map((item) => {
+            const newBadges = [
+
+            ].filter(Boolean)
+            if(item.created_at < experimentalEnd) newBadges.push({ name: "EXPERIMENTAL"})
+              if(item.created_at < betaEnd) newBadges.push({ name: "BETA" })
+              if(item.userId == process.env.CR_OWNER_ID) newBadges.push({ name: "OWNER" })
+              if(process.env.CR_DONOR_IDS && process.env.CR_DONOR_IDS.split(',').some(id => id == item.userId)) newBadges.push({ name: "DONOR" })
             // reschema this 
             return {
               user_data: item.user_data,
