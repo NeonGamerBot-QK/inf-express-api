@@ -38,6 +38,8 @@ res.status(419).end()
         const newBadges = [
 
         ].filter(Boolean)
+        // lol why
+        const item = value
         if(item.created_at < experimentalEnd) newBadges.push({ name: "EXPERIMENTAL"})
         if(item.created_at < betaEnd) newBadges.push({ name: "BETA" })
         if(item.userId == process.env.CR_OWNER_ID) newBadges.push({ name: "OWNER" })
