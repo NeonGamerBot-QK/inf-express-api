@@ -1,6 +1,9 @@
 const { rateLimit } = require('express-rate-limit').default
-
+const experimentalEnd = new Date('07/20/2024').getTime()
+const betaEnd = new Date('08/01/2024').getTime()
 // default template
+// fyi all id's are when it was created on an ep as thats unique enough
+const uuid = require('uuid')
 module.exports = (router, db) => {
   router.use(async (req, res, next) => {
     const visits = await db.get('visits') || 0
@@ -13,11 +16,51 @@ module.exports = (router, db) => {
     const visits = req.visits
     res.json({ visits })
   })
-  router.get('/comments/:epid/:epname', rateLimit({ windowMs: 1000, limit: 2 }), async (req, res) => {
+  const defLimit = rateLimit({ windowMs: 1000, limit: 2 })
+  router.get('/comments/:epid/:epname', defLimit, async (req, res) => {
         // db.get(`${req.params.epid}_${req.params.epname}`)
-    res.json(
-    await db.get(`${req.params.epid}_${req.params.epname}`) || []
-)
+    let result =     await db.get(`${req.params.epid}_${req.params.epname}`) || []
+    result = result.map(i => {
+      delete i['userId']
+      return i
+    })
+        res.json(result)
+  })
+  router.post('/comments/:epid/:epname/:comment_id/like', defLimit, (req,res) => {
+// todo
+res.status(419).end()
+  })
+  router.get('/db/serialize', (req,res) => {
+    // remake db to make sure 
+    if(req.query.auth !== process.env.CR_AUTH) return res.status(401).json({ message: `No valid auth`})
+      for await (const [key, value] of db.iterator()) {
+        // console.log(key, value);
+        const newBadges = [
+
+        ].filter(Boolean)
+        if(item.created_at < experimentalEnd) newBadges.push({ name: "EXPERIMENTAL"})
+        if(item.created_at < betaEnd) newBadges.push({ name: "BETA" })
+        if(item.userId == process.env.CR_OWNER_ID) newBadges.push({ name: "OWNER" })
+        if(process.env.CR_DONOR_IDS && process.env.CR_DONOR_IDS.split(',').some(id => id == item.userId)) newBadges.push({ name: "DONOR" })
+        if(key.includes('_')) {
+          value = value.map((item) => {
+            // reschema this 
+            return {
+              user_data: item.user_data,
+              content: item.content,
+              userId: item.user_id,
+              created_at: item.created_at,
+              id: item.id, 
+              likes: item.likes,
+              dislikes: item.dislikes,
+              updated_at: item.updated_at,
+              deleted: item.deleted,
+              force_safe_mode: item.force_safe_mode,
+              badges: Array.isArray(item.badges) ? [...item.badges, ...newBadges] : newBadges
+            }
+          })
+        }
+      };
   })
   router.post('/comments/:epid/:epname', rateLimit({ windowMs: 5000, limit: 3 }), async (req, res) => {
     const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
@@ -40,7 +83,13 @@ module.exports = (router, db) => {
       user_data,
       content,
       userId,
-      created_at: Date.now()
+      created_at: Date.now(),
+      id: uuid.v4(), 
+      likes: 0,
+      dislikes: 0,
+      updated_at: Date.now(),
+      deleted: false,
+      force_safe_mode: false
     })
     await db.set(`${req.params.epid}_${req.params.epname}`, comments)
     res.status(201).json({ message: 'OK NEW' })

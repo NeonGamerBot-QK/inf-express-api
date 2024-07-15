@@ -22,7 +22,8 @@
     "morgan": "^1.10.0",
     "node-fetch": "cjs",
     "nodemailer": "6.9.13",
-    "socket.io": "latest"
+    "socket.io": "latest",
+    "uuid": "^10.0.0"
   },
   "optionalDependencies": {
     "@keyv/etcd": "^1.2.1",
