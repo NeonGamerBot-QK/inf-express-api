@@ -28,7 +28,7 @@ module.exports = (router, db) => {
 const userIdSupplied = Boolean(userId)
     result = result.map(i => {
 if(userIdSupplied) {
-i.has_liked = i.user_who_liked.includes(userId)
+if(Array.isArray(i.user_who_liked)) i.has_liked = i.user_who_liked.includes(userId)
 }
       if(!isAuthed) {
         delete i['userId']
