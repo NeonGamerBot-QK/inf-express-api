@@ -21,11 +21,20 @@ module.exports = (router, db) => {
   router.get('/comments/:epid/:epname', defLimit, async (req, res) => {
         // db.get(`${req.params.epid}_${req.params.epname}`)
         const isAuthed = req.query.auth ==  process.env.CR_AUTH
-      console.log(isAuthed)
+  
+        console.log(isAuthed)
     let result =     await db.get(`${req.params.epid}_${req.params.epname}`) || []
+    const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
+const userIdSupplied = Boolean(userId)
     result = result.map(i => {
-      if(!isAuthed) delete i['userId']
-      return i
+if(userIdSupplied) {
+i.has_liked = i.user_who_liked.includes(userId)
+}
+      if(!isAuthed) {
+        delete i['userId']
+      delete i['user_who_liked']
+      }
+        return i
     })
         res.json(result)
   })
