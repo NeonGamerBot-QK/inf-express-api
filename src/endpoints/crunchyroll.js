@@ -29,10 +29,12 @@ const userIdSupplied = Boolean(userId)
     result = result.map(i => {
 if(userIdSupplied) {
 if(Array.isArray(i.user_who_liked)) i.has_liked = i.user_who_liked.includes(userId)
+  if(Array.isArray(i.user_who_disliked)) i.has_disliked = i.user_who_disliked.includes(userId)
 }
       if(!isAuthed) {
         delete i['userId']
       delete i['user_who_liked']
+      delete i['user_who_disliked']
       }
         return i
     })
@@ -73,6 +75,36 @@ res.status(200).json({ message: "Un-Liked Comment"})
     comments[theComment].likes = comments[theComment].user_who_liked.length
     await db.set(`${req.params.epid}_${req.params.epname}`, comments)
     res.status(200).json({ message: "Liked Comment"})
+    }
+    // todo
+// res.status(419).end()
+  })
+  router.post('/comments/:epid/:epname/:comment_id/dislike', defLimit, async (req,res) => {
+    const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
+    if (!userId) return res.status(400).json({ message: `User ID not found`})
+    if (userId.split('-').length < 3) return res.status(400).json({ message: `User ID invalid\nOnly use this application via crunchyroll`})
+      const id = req.params.comment_id || req.query.id 
+    if(!id) return res.status(400).json({ message: `No Valid Message ID provided`})
+// const ep_data = await db.get(`${}`)
+    let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
+    const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
+    if(Array.isArray(comments[theComment].user_who_disliked) && comments[theComment].user_who_disliked.includes(userId)) { 
+// remove like on comment
+comments[theComment].user_who_disliked.push(userId)
+// filter dups
+comments[theComment].user_who_disliked = comments[theComment].user_who_disliked.filter(e => e !== userId)
+comments[theComment].user_who_disliked = [... new Set(comments[theComment].user_who_disliked)]
+comments[theComment].dislikes = comments[theComment].user_who_disliked.length
+await db.set(`${req.params.epid}_${req.params.epname}`, comments)
+res.status(200).json({ message: "Un-DisLiked Comment"})
+    } else {
+      if(!comments[theComment].user_who_disliked) comments[theComment].user_who_disliked = []
+    comments[theComment].user_who_disliked.push(userId)
+    // filter dups
+    comments[theComment].user_who_disliked = [... new Set(comments[theComment].user_who_disliked)]
+    comments[theComment].dislikes = comments[theComment].user_who_disliked.length
+    await db.set(`${req.params.epid}_${req.params.epname}`, comments)
+    res.status(200).json({ message: "DisLiked Comment"})
     }
     // todo
 // res.status(419).end()
