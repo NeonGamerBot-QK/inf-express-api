@@ -56,13 +56,24 @@ res.json(result)
 // const ep_data = await db.get(`${}`)
     let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
     const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
-    if(!comments[theComment].user_who_liked) comments[theComment].user_who_liked = []
+    if(Array.isArray(comments[theComment].user_who_liked) && comments[theComment].user_who_liked.includes(userId)) { 
+// remove like on comment
+comments[theComment].user_who_liked.push(userId)
+// filter dups
+comments[theComment].user_who_liked = comments[theComment].user_who_liked.filter(e => e !== userId)
+comments[theComment].user_who_liked = [... new Set(comments[theComment].user_who_liked)]
+comments[theComment].likes = comments[theComment].user_who_liked.length
+await db.set(`${req.params.epid}_${req.params.epname}`, comments)
+res.status(200).json({ message: "Un-Liked Comment"})
+    } else {
+      if(!comments[theComment].user_who_liked) comments[theComment].user_who_liked = []
     comments[theComment].user_who_liked.push(userId)
     // filter dups
     comments[theComment].user_who_liked = [... new Set(comments[theComment].user_who_liked)]
     comments[theComment].likes = comments[theComment].user_who_liked.length
     await db.set(`${req.params.epid}_${req.params.epname}`, comments)
     res.status(200).json({ message: "Liked Comment"})
+    }
     // todo
 // res.status(419).end()
   })
