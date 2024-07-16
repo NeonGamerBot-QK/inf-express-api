@@ -1,6 +1,6 @@
 const { rateLimit } = require('express-rate-limit').default
-const experimentalEnd = new Date('07/20/2024').getTime()
-const betaEnd = new Date('08/01/2024').getTime()
+const experimentalEnd = new Date('07/18/2024').getTime()
+const betaEnd = new Date('07/25/2024').getTime()
 // default template
 // fyi all id's are when it was created on an ep as thats unique enough
 const uuid = require('uuid')
@@ -48,6 +48,7 @@ res.json(result)
     let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
     const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
     comments[theComment].likes++;
+    if(!comments[theComment].user_who_liked) comments[theComment].user_who_liked = []
     comments[theComment].user_who_liked.push(userId)
     await db.set(`${req.params.epid}_${req.params.epname}`, comments)
     res.status(200).json({ message: "Liked Comment"})
