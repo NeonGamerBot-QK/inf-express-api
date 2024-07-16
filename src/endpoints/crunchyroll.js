@@ -4,6 +4,7 @@ const betaEnd = new Date('08/01/2024').getTime()
 // default template
 // fyi all id's are when it was created on an ep as thats unique enough
 const uuid = require('uuid')
+const { isMalLink } = require('../util/mal_plugin')
 module.exports = (router, db) => {
   router.use(async (req, res, next) => {
     const visits = await db.get('visits') || 0
@@ -110,8 +111,11 @@ res.json({ ok:true })
     if (typeof user_data.name !== 'string') errors.push("'user_data.name' is not a string")
     if (typeof user_data.avatar !== 'string') errors.push("'user_data.avatar' is not a string")
     if (!user_data.avatar.startsWith('https://')) errors.push(`Invalid avatar image.`)
+   const vir = isMalLink(content)
+      if (vir.isMal) errors.push(`Malicous URL (${vir.type}) found in body`)
     if (errors.length > 0) return res.status(403).json({ message: `Multiple errors found`, errors })
-    const comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
+      const comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
+
     comments.push({
       user_data,
       content,
