@@ -214,16 +214,16 @@ res.json({ ok:true })
       if (vir.isMal) errors.push(`Malicous URL (${vir.type}) found in body`)
     if (errors.length > 0) return res.status(403).json({ message: `Multiple errors found`, errors })
       const comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
-
+const created_at = Date.now() // must be EXACT
     comments.push({
       user_data,
       content,
       userId,
-      created_at: Date.now(),
+      created_at,
       id: uuid.v4(), 
       likes: 0,
       dislikes: 0,
-      updated_at: Date.now(),
+      updated_at: created_at,
       deleted: false,
       force_safe_mode: false
     })
