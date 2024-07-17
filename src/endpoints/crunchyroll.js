@@ -31,6 +31,11 @@ if(userIdSupplied) {
 if(Array.isArray(i.user_who_liked)) i.has_liked = i.user_who_liked.includes(userId)
   if(Array.isArray(i.user_who_disliked)) i.has_disliked = i.user_who_disliked.includes(userId)
 }
+if(userId == i.userId) {
+  i.is_mine = true;
+} else {
+  i.is_mine = false;
+}
       if(!isAuthed) {
         delete i['userId']
       delete i['user_who_liked']
