@@ -92,6 +92,7 @@ res.status(200).json({ message: "Un-Liked Comment"})
 // const ep_data = await db.get(`${}`)
     let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
     const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
+    if(userId !== comments[theComment].userId) return res.status(401).json({ message: "Not allowed to edit others comments"})
     comments[theComment].content = req.body.content 
     comments[theComment].updated_at = Date.now()
     await db.set(`${req.params.epid}_${req.params.epname}`, comments)
@@ -109,6 +110,7 @@ res.json({ message: "message updated"})
 // const ep_data = await db.get(`${}`)
     let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
     const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
+    if(userId !== comments[theComment].userId) return res.status(401).json({ message: "Not allowed to edit others comments"})
     delete comments[theComment]
     comments = comments.filter(Boolean)
     await db.set(`${req.params.epid}_${req.params.epname}`, comments)
