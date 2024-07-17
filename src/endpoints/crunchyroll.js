@@ -79,6 +79,42 @@ res.status(200).json({ message: "Un-Liked Comment"})
     // todo
 // res.status(419).end()
   })
+  router.post('/comments/:epid/:epname/:comment_id/', async function (req,res) {
+    // edit comment 
+    // needs userId , content to edit the messaage with, 
+    // needs to update content, update edit stamp, return OK
+    const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
+    if (!userId) return res.status(400).json({ message: `User ID not found`})
+    if (userId.split('-').length < 3) return res.status(400).json({ message: `User ID invalid\nOnly use this application via crunchyroll`})
+      const id = req.params.comment_id || req.query.id 
+    if(!id) return res.status(400).json({ message: `No Valid Message ID provided`})
+      if(!req.body.content) return res.status(400).json({ message: "No Content to update msg"})
+// const ep_data = await db.get(`${}`)
+    let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
+    const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
+    comments[theComment].content = req.body.content 
+    comments[theComment].updated_at = Date.now()
+    await db.set(`${req.params.epid}_${req.params.epname}`, comments)
+res.json({ message: "message updated"})
+  })
+  router.delete('/comments/:epid/:epname/:comment_id/', async (req,res)  => {
+    // del comment 
+    // needs userId , 
+    // needs to update content, update edit stamp, return OK
+    const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
+    if (!userId) return res.status(400).json({ message: `User ID not found`})
+    if (userId.split('-').length < 3) return res.status(400).json({ message: `User ID invalid\nOnly use this application via crunchyroll`})
+      const id = req.params.comment_id || req.query.id 
+    if(!id) return res.status(400).json({ message: `No Valid Message ID provided`})
+// const ep_data = await db.get(`${}`)
+    let comments = await db.get(`${req.params.epid}_${req.params.epname}`) || []
+    const theComment = comments.findIndex(e => e.created_at == id || e.id == id)
+    delete comments[theComment]
+    comments = comments.filter(Boolean)
+    await db.set(`${req.params.epid}_${req.params.epname}`, comments)
+res.json({ nessage: "Comment deleted!" })
+    // await db.set 
+  })
   router.post('/comments/:epid/:epname/:comment_id/dislike', defLimit, async (req,res) => {
     const userId = req.headers['X-User-Id'] || req.headers['x-user-id']
     if (!userId) return res.status(400).json({ message: `User ID not found`})
@@ -143,7 +179,8 @@ res.status(200).json({ message: "Un-DisLiked Comment"})
               updated_at: item.updated_at,
               deleted: item.deleted,
               force_safe_mode: item.force_safe_mode,
-              badges: Array.isArray(item.badges) ? [...item.badges, ...newBadges] : newBadges
+              badges: Array.isArray(item.badges) ? [...item.badges, ...newBadges] : newBadges,
+              ...item
             }
           })
           db.set(key, value)
@@ -185,6 +222,15 @@ res.json({ ok:true })
     })
     await db.set(`${req.params.epid}_${req.params.epname}`, comments)
     res.status(201).json({ message: 'OK NEW' })
+  })
+  // keep this at the end
+  router.use((err,req,res,next) => {
+    if(err) {
+      console.error(err)
+      res.status(500).json({ message: err.message })
+    } else {
+      res.status(404).json({ message: `404 ${req.path}` })
+    }
   })
 }
 // module.exports.socket_handle = (socket,io,db) => {
