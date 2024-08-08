@@ -28,7 +28,7 @@ module.exports = (router, db) => {
         res.json({ message: `Avatar not found (or an error)`})
       } else {
         results = results.map(r => r[0].replaceAll('"', ''))
-        let bimiRecord = results.find(r => r[0].startsWith('v=BIMI'))
+        let bimiRecord = results.find(r => r.startsWith('v=BIMI'))
         if (!bimiRecord) {
           res.status(404).json({ message: `Avatar not found (or an error)`})
           return
@@ -62,8 +62,9 @@ module.exports = (router, db) => {
         }
         res.json({ message: `Avatar not found (or an error)`})
       } else {
+        console.log(results)
         results = results.map(r => r[0].replaceAll('"', ''))
-        let bimiRecord = results.find(r => r[0].startsWith('v=BIMI'))
+        let bimiRecord = results.find(r => r.startsWith('v=BIMI'))
         if (!bimiRecord) {
           res.status(404).json({ message: `Avatar not found (or an error)`})
           return
@@ -98,7 +99,7 @@ module.exports.socket_handle = (socket, io, db) => {
         socket.emit('response', { message: `Avatar not found (or an error)`})
       } else {
         results = results.map(r => r[0].replaceAll('"', ''))
-        let bimiRecord = results.find(r => r[0].startsWith('v=BIMI'))
+        let bimiRecord = results.find(r => r.startsWith('v=BIMI'))
         if (!bimiRecord) {
           res.status(404).json({ message: `Avatar not found (or an error)`})
           return
