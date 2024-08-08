@@ -1,6 +1,24 @@
 // BRAND AVATARS
-const dns = require('dns')
+// const dns = require('dns')
+
 module.exports = (router, db) => {
+// func
+const queryForDomain = async (domain) => {
+  let out = require('child_process').execSync(`dig TXT +short default._bimi.${domain}`).toString()
+  if (!out) return 'bad-query'
+  out = out.replaceAll('"', '')
+  if (!out.startsWith('v=BIMI')) return 'bad-query'
+  const bimiRecord = out;
+  const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
+  const payload = {
+    _bimi,
+    svgImg: svgImg.split('l=')[1],
+    cert: cert.split('a=')[1],
+    fullRecord: bimiRecord
+  }
+  await db.set(req.params.domain, payload)
+  return payload;
+}
   router.use(async (req, res, next) => {
     const visits = await db.get('visits') || 0
     req.visits = visits
@@ -18,37 +36,15 @@ module.exports = (router, db) => {
       res.redirect(exists.svgImg)
       return
     }
-    dns.resolveTxt('default._bimi.' + req.params.domain, async (err, results) => {
-      if (err) {
-        console.error(err)
-        if (err.message.includes('ENOTFOUND')) {
-          res.status(404)
-        } else {
-          res.status(403)
-        }
-        res.json({ message: `Avatar not found (or an error)`})
-      } else {
-        console.log(results)
-        results = results.map(r => r[0].replaceAll('"', ''))
-        let bimiRecord = results.find(r => r.startsWith('v=BIMI'))
-        console.log(bimiRecord, results)
-        if (!bimiRecord) {
-          res.status(404).json({ message: `Avatar not found (or an error)`})
-          return
-        }
-        bimiRecord = bimiRecord[0]
-        const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
-        const payload = {
-          _bimi,
-          svgImg: svgImg.split('l=')[1],
-          cert: cert.split('a=')[1],
-          fullRecord: bimiRecord
-        }
-        await db.set(req.params.domain, payload)
-                // res.status(201).json(payload)
-        res.redirect(svgImg.split('l=')[1])
-      }
-    })
+    const r = await queryForDomain(req.params.domain)
+    switch (r) {
+      case 'bad-query':
+        res.status(404).json({ message: `Avatar not found` })
+        break;
+      default:
+        res.redirect(r.svgImg)
+      break;
+    }
   })
   router.get('/:domain', async (req, res) => {
     const exists = await db.get(req.params.domain)
@@ -56,34 +52,15 @@ module.exports = (router, db) => {
       res.json(exists)
       return
     }
-    dns.resolveTxt('default._bimi.' + req.params.domain, async (err, results) => {
-      if (err) {
-        if (err.message.includes('ENOTFOUND')) {
-          res.status(404)
-        } else {
-          res.status(403)
-        }
-        res.json({ message: `Avatar not found (or an error)`})
-      } else {
-        console.log(results)
-        results = results.map(r => r[0].replaceAll('"', ''))
-        let bimiRecord = results.find(r => r.startsWith('v=BIMI'))
-        if (!bimiRecord) {
-          res.status(404).json({ message: `Avatar not found (or an error)`})
-          return
-        }
-        bimiRecord = bimiRecord[0]
-        const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
-        const payload = {
-          _bimi,
-          svgImg: svgImg.split('l=')[1],
-          cert: cert.split('a=')[1],
-          fullRecord: bimiRecord
-        }
-        await db.set(req.params.domain, payload)
-        res.status(201).json(payload)
-      }
-    })
+    const r = await queryForDomain(req.params.domain)
+    switch (r) {
+      case 'bad-query':
+        res.status(404).json({ message: `Avatar not found` })
+        break;
+      default:
+        res.status(201).json(r)
+      break;
+    }
   })
 }
 module.exports.socket_handle = (socket, io, db) => {
@@ -97,28 +74,14 @@ module.exports.socket_handle = (socket, io, db) => {
       socket.emit('response', exists)
       return
     }
-    dns.resolveTxt('default._bimi.' + domain, async (err, results) => {
-      if (err) {
-        socket.emit('response', { message: `Avatar not found (or an error)`})
-      } else {
-        results = results.map(r => r[0].replaceAll('"', ''))
-        let bimiRecord = results.find(r => r.startsWith('v=BIMI'))
-        if (!bimiRecord) {
-          res.status(404).json({ message: `Avatar not found (or an error)`})
-          return
-        }
-        bimiRecord = bimiRecord[0]
-        const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
-        const payload = {
-          _bimi,
-          svgImg: svgImg.split('l=')[1],
-          cert: cert.split('a=')[1],
-          fullRecord: bimiRecord
-        }
-        await db.set(req.params.domain, payload)
-        socket.emit('response', payload)
-                // res.status(201).json(payload)
-      }
-    })
+    const r = await queryForDomain(req.params.domain)
+    switch (r) {
+      case 'bad-query':
+        socket.emit('response', { message: `Avatar not found` })
+        break;
+      default:
+        socket.emit('response', r)
+      break;
+    }
   })
 }
