@@ -15,7 +15,7 @@ module.exports = (router, db) => {
     router.get('/:domain/icon', async (req,res) => {
         const exists = await db.get(req.params.domain)
         if(exists) {
-            res.reditect(exists.svgImg)
+            res.redirect(exists.svgImg)
         return;
         }
         dns.resolveTxt('default._bimi.'+req.params.domain, async (err, results) => {
