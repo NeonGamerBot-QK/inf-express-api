@@ -56,7 +56,7 @@ module.exports = (router, db) => {
                 }
                 res.json({ message: `Avatar not found (or an error)`})
             } else {
-                const bimiRecord = results.find(r => r[0].startsWith('v'))
+                const bimiRecord = results.find(r => r[0].startsWith('v'))[0]
                 const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e=>e.trim())
                 const payload = {
                     _bimi, 
