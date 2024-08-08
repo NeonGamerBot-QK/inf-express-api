@@ -30,7 +30,7 @@ module.exports = (router, db) => {
         let bimiRecord = results.find(r => r[0].startsWith('v=BIMI'))
         if (!bimiRecord) {
           res.status(404).json({ message: `Avatar not found (or an error)`})
-          return; 
+          return
         }
         bimiRecord = bimiRecord[0]
         const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
@@ -64,7 +64,7 @@ module.exports = (router, db) => {
         let bimiRecord = results.find(r => r[0].startsWith('v=BIMI'))
         if (!bimiRecord) {
           res.status(404).json({ message: `Avatar not found (or an error)`})
-          return; 
+          return
         }
         bimiRecord = bimiRecord[0]
         const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
@@ -98,7 +98,7 @@ module.exports.socket_handle = (socket, io, db) => {
         let bimiRecord = results.find(r => r[0].startsWith('v=BIMI'))
         if (!bimiRecord) {
           res.status(404).json({ message: `Avatar not found (or an error)`})
-          return; 
+          return
         }
         bimiRecord = bimiRecord[0]
         const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
