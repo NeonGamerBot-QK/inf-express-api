@@ -20,6 +20,7 @@ module.exports = (router, db) => {
     }
     dns.resolveTxt('default._bimi.' + req.params.domain, async (err, results) => {
       if (err) {
+        console.error(err)
         if (err.message.includes('ENOTFOUND')) {
           res.status(404)
         } else {
