@@ -3,22 +3,22 @@
 
 module.exports = (router, db) => {
 // func
-const queryForDomain = async (domain) => {
-  let out = require('child_process').execSync(`dig TXT +short default._bimi.${domain}`).toString()
-  if (!out) return 'bad-query'
-  out = out.replaceAll('"', '')
-  if (!out.startsWith('v=BIMI')) return 'bad-query'
-  const bimiRecord = out;
-  const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
-  const payload = {
-    _bimi,
-    svgImg: svgImg.split('l=')[1],
-    cert: cert.split('a=')[1],
-    fullRecord: bimiRecord
+  const queryForDomain = async (domain) => {
+    let out = require('child_process').execSync(`dig TXT +short default._bimi.${domain}`).toString()
+    if (!out) return 'bad-query'
+    out = out.replaceAll('"', '')
+    if (!out.startsWith('v=BIMI')) return 'bad-query'
+    const bimiRecord = out
+    const [_bimi, svgImg, cert] = bimiRecord.split(';').map(e => e.trim())
+    const payload = {
+      _bimi,
+      svgImg: svgImg.split('l=')[1],
+      cert: cert.split('a=')[1],
+      fullRecord: bimiRecord
+    }
+    await db.set(domain, payload)
+    return payload
   }
-  await db.set(domain, payload)
-  return payload;
-}
   router.use(async (req, res, next) => {
     const visits = await db.get('visits') || 0
     req.visits = visits
@@ -40,10 +40,10 @@ const queryForDomain = async (domain) => {
     switch (r) {
       case 'bad-query':
         res.status(404).json({ message: `Avatar not found` })
-        break;
+        break
       default:
         res.redirect(r.svgImg)
-      break;
+        break
     }
   })
   router.get('/:domain', async (req, res) => {
@@ -56,10 +56,10 @@ const queryForDomain = async (domain) => {
     switch (r) {
       case 'bad-query':
         res.status(404).json({ message: `Avatar not found` })
-        break;
+        break
       default:
         res.status(201).json(r)
-      break;
+        break
     }
   })
 }
@@ -78,10 +78,10 @@ module.exports.socket_handle = (socket, io, db) => {
     switch (r) {
       case 'bad-query':
         socket.emit('response', { message: `Avatar not found` })
-        break;
+        break
       default:
         socket.emit('response', r)
-      break;
+        break
     }
   })
 }
