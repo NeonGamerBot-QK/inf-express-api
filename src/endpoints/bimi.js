@@ -27,8 +27,10 @@ module.exports = (router, db) => {
         }
         res.json({ message: `Avatar not found (or an error)`})
       } else {
+        console.log(results)
         results = results.map(r => r[0].replaceAll('"', ''))
         let bimiRecord = results.find(r => r.startsWith('v=BIMI'))
+        console.log(bimiRecord, results)
         if (!bimiRecord) {
           res.status(404).json({ message: `Avatar not found (or an error)`})
           return
