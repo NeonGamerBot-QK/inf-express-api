@@ -50,9 +50,9 @@ module.exports = (router, db) => {
     slackInstance
       .makeRequest(`views.publish`, "POST", {
         user_id: event.user,
-        view: JSON.stringify(view),
+        view,
       })
-      .then((res) => res.json());
+      .then((res) => res.text()).then(console.log);
   }
   router.use((req, res, next) => {
     res.send(`404`);
