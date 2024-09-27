@@ -9,10 +9,123 @@ module.exports = (router, db) => {
     process.env.WEATHER_SLACK_BOT_SECRET,
     process.env.WEATHER_SLACK_VERIFICATION,
   );
+  async function sendWeather() {
+    const weatherData = await fetch(
+      `http://api.weatherapi.com/v1/current.json?q=${hckHQLocation}&key=${process.env.WEATHER_API_KEY}`,
+    ).then((res) => res.json());
+    function formatStr(str) {
+      Object.keys(weatherData.current).forEach((key) => {
+        str = str.replace(
+          `{current.${key}}`,
+          weatherData.current[key].toString(),
+        );
+      });
+      Object.keys(weatherData.location).forEach((key) => {
+        str = str.replace(
+          `{location.${key}}`,
+          weatherData.location[key].toString(),
+        );
+      });
+      return str;
+    }
+    const payload = ({
+      blocks: [
+        {
+          type: "image",
+          title: {
+            type: "plain_text",
+            text: weatherData.current.condition.text,
+            emoji: true,
+          },
+          image_url: weatherData.current.condition.icon,
+          alt_text: weatherData.current.condition.text,
+        },
+        {
+          type: "header",
+          text: {
+            type: "plain_text",
+            text: formatStr("{location.name} - {location.region}"),
+            emoji: true,
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: formatStr("Temp: {current.temp_f} ({current.temp_c})"),
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: formatStr(
+              "Feels Like: {current.feelslike_f} ({current.feelslike_c})",
+            ),
+          },
+        },
+        {
+          type: "divider",
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: formatStr("Wind: {current.wind_mph} ({current.wind_kph})"),
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: formatStr("Gust: {current.gust_mph} ({current.gust_kph})"),
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: formatStr(
+              "Wind: {current.windchill_f} ({current.windchill_c})",
+            ),
+          },
+        },
+        {
+          type: "divider",
+        },
+        {
+          type: "actions",
+          elements: [
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "Weather on accuweather",
+                emoji: true,
+              },
+              url: "https://www.accuweather.com/en/us/shelburne/05482/weather-forecast/2184925?city=shelburne",
+            },
+          ],
+        },
+      ],
+    });
+   return  slackInstance.makeRequest(`/chat.postMessage`, "POST", {
+      ...payload,
+      channel: "C0P5NE354"
+    });
+  }
+setInterval( () => {
+}, 60 * 60 * 1000)
   router.all("/info", (req, res) => {
     console.debug(req.body);
     res.send("wsp this is a wip atm");
   });
+  // will be removed next commit
+  router.get('/test', (req,res) => {
+sendWeather().then(() => {
+  res.send('ok')
+})
+  })
 
   router.post("/weather", async (req, res) => {
     const weatherData = await fetch(
