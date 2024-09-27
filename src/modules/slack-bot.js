@@ -22,7 +22,7 @@ module.exports = class SlackBot {
     console.debug(url, method, data);
     return fetch(`https://slack.com/api${url}`, {
       headers: {
-        Authorization: `Bot ${this.token}`,
+        Authorization: `Bearer ${this.token}`,
         Accept: "application/json",
       },
       method,
