@@ -13,11 +13,11 @@ module.exports = (router, db) => {
   });
   router.post(
     "/events",
-(req,res,next) => {
-  slackInstance.authMiddleware(req,res,next);
-},
-    (req,res,next) => {
-      slackInstance.eventMiddleware(req,res,next);
+    (req, res, next) => {
+      slackInstance.authMiddleware(req, res, next);
+    },
+    (req, res, next) => {
+      slackInstance.eventMiddleware(req, res, next);
     },
     (req, res) => {
       if (!req.body) return;
