@@ -48,7 +48,7 @@ module.exports = (router, db) => {
     };
 
     slackInstance
-      .makeRequest(`views.publish`, "POST", {
+      .makeRequest(`/views.publish`, "POST", {
         user_id: event.user,
         view,
       })
