@@ -67,8 +67,8 @@ module.exports = (router, db) => {
         view,
         token: process.env.WEATHER_SLACK_BOT_SECRET, // ffs slack
       })
-      .then((res) => res.text())
-      //.then(console.log);
+      .then((res) => res.text());
+    //.then(console.log);
   }
   router.use((req, res, next) => {
     res.send(`404`);
