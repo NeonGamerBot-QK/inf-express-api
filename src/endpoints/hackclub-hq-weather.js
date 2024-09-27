@@ -52,7 +52,8 @@ module.exports = (router, db) => {
         user_id: event.user,
         view,
       })
-      .then((res) => res.text()).then(console.log);
+      .then((res) => res.text())
+      .then(console.log);
   }
   router.use((req, res, next) => {
     res.send(`404`);
