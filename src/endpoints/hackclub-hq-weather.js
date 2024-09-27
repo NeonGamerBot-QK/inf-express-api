@@ -116,14 +116,8 @@ module.exports = (router, db) => {
   }
   setInterval(() => {}, 60 * 60 * 1000);
   router.all("/info", (req, res) => {
-    console.debug(req.body);
+    // console.debug(req.body);
     res.send("wsp this is a wip atm");
-  });
-  // will be removed next commit
-  router.get("/test", (req, res) => {
-    sendWeather().then(() => {
-      res.send("ok");
-    });
   });
 
   router.post("/weather", async (req, res) => {
@@ -238,7 +232,7 @@ module.exports = (router, db) => {
     },
     (req, res) => {
       if (!req.body) return;
-      console.log(req.body);
+      // console.log(req.body);
       if (req.body.challenge) {
         res.send(req.body.challenge);
         return;
