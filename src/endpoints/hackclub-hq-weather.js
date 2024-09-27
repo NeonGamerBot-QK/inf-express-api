@@ -123,7 +123,9 @@ module.exports = (router, db) => {
   );
   router.all("/info", (req, res) => {
     // console.debug(req.body);
-    res.send("Hi there im just a simple bot which sends the weather from HQ.\n> if you have any complaints Please contact @Neon");
+    res.send(
+      "Hi there im just a simple bot which sends the weather from HQ.\n> if you have any complaints Please contact @Neon",
+    );
   });
 
   router.post("/weather", async (req, res) => {
