@@ -11,6 +11,20 @@ module.exports = (router, db) => {
     console.debug(req.body);
     res.send("wsp this is a wip atm");
   });
+  
+  router.post("/weather", (req,res) => {
+    res.json({
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `wip`,
+          },
+     }
+     ]
+    })
+  })
   router.post(
     "/events",
     (req, res, next) => {
