@@ -9,6 +9,9 @@
     "dev": "nodemon .",
     "create-new-endpoint": "node scripts/create-new-endpoint.js"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@keyv/compress-gzip": "^1.2.3",
     "@keyv/sqlite": "^3.6.7",
