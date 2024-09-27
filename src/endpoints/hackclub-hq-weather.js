@@ -31,7 +31,9 @@ module.exports = (router, db) => {
           weatherData.location[key].toString(),
         );
       });
+      return str;
     }
+    res.set("Content-Type", "application/json");
     res.json({
       blocks: [
         {
