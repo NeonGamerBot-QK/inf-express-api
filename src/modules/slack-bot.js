@@ -19,6 +19,7 @@ module.exports = class SlackBot {
     next();
   }
   makeRequest(url, method, data) {
+    console.debug(url, method, data);
     return fetch(`https://slack.com/api${url}`, {
       headers: {
         Authorization: `Bot ${this.token}`,
