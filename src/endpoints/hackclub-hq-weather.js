@@ -51,6 +51,7 @@ module.exports = (router, db) => {
       .makeRequest(`/views.publish`, "POST", {
         user_id: event.user,
         view,
+        token: process.env.WEATHER_SLACK_BOT_SECRET, // ffs slack
       })
       .then((res) => res.text())
       .then(console.log);
