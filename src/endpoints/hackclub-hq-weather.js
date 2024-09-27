@@ -114,7 +114,10 @@ module.exports = (router, db) => {
       channel: "C0P5NE354",
     });
   }
-  setInterval(() => {}, 60 * 60 * 1000);
+  setInterval(() => {
+    console.log("pinging");
+    sendWeather();
+  }, 60 * 60 * 1000);
   router.all("/info", (req, res) => {
     // console.debug(req.body);
     res.send("wsp this is a wip atm");
