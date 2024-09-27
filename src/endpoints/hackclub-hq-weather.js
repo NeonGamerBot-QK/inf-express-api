@@ -3,9 +3,12 @@ const SlackBot = require("../modules/slack-bot");
 // default template
 module.exports = (router, db) => {
   //router.get("/");
-  const slackInstance = new SlackBot( process.env.WEATHER_SLACK_BOT_SECRET,process.env.WEATHER_SLACK_VERIFICATION);
+  const slackInstance = new SlackBot(
+    process.env.WEATHER_SLACK_BOT_SECRET,
+    process.env.WEATHER_SLACK_VERIFICATION,
+  );
   router.all("/info", (req, res) => {
-    console.debug(req.body)
+    console.debug(req.body);
     res.send("wsp this is a wip atm");
   });
   router.post(
@@ -47,9 +50,9 @@ module.exports = (router, db) => {
       })
       .then((res) => res.json());
   }
-  router.use((req,res,next) => {
-    res.send(`404`)
-  })
+  router.use((req, res, next) => {
+    res.send(`404`);
+  });
   router.use((err, req, res) => {
     console.error(err.stack);
     res.send(err.message);
