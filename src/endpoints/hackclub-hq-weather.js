@@ -28,7 +28,7 @@ module.exports = (router, db) => {
       });
       return str;
     }
-    const payload = ({
+    const payload = {
       blocks: [
         {
           type: "image",
@@ -108,24 +108,23 @@ module.exports = (router, db) => {
           ],
         },
       ],
-    });
-   return  slackInstance.makeRequest(`/chat.postMessage`, "POST", {
+    };
+    return slackInstance.makeRequest(`/chat.postMessage`, "POST", {
       ...payload,
-      channel: "C0P5NE354"
+      channel: "C0P5NE354",
     });
   }
-setInterval( () => {
-}, 60 * 60 * 1000)
+  setInterval(() => {}, 60 * 60 * 1000);
   router.all("/info", (req, res) => {
     console.debug(req.body);
     res.send("wsp this is a wip atm");
   });
   // will be removed next commit
-  router.get('/test', (req,res) => {
-sendWeather().then(() => {
-  res.send('ok')
-})
-  })
+  router.get("/test", (req, res) => {
+    sendWeather().then(() => {
+      res.send("ok");
+    });
+  });
 
   router.post("/weather", async (req, res) => {
     const weatherData = await fetch(
