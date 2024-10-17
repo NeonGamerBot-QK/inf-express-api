@@ -77,7 +77,7 @@ module.exports = (router, db) => {
       let comments =
         (await db.get(`${req.params.epid}_${req.params.epname}`)) || [];
       const theComment = comments.findIndex(
-        (e) => e.created_at == id || e.id == id
+        (e) => e.created_at == id || e.id == id,
       );
       if (
         Array.isArray(comments[theComment].user_who_liked) &&
@@ -109,7 +109,7 @@ module.exports = (router, db) => {
       }
       // todo
       // res.status(419).end()
-    }
+    },
   );
   router.post(
     "/comments/:epid/:epname/:comment_id/",
@@ -135,7 +135,7 @@ module.exports = (router, db) => {
       let comments =
         (await db.get(`${req.params.epid}_${req.params.epname}`)) || [];
       const theComment = comments.findIndex(
-        (e) => e.created_at == id || e.id == id
+        (e) => e.created_at == id || e.id == id,
       );
       if (userId !== comments[theComment].userId)
         return res
@@ -145,7 +145,7 @@ module.exports = (router, db) => {
       comments[theComment].updated_at = Date.now();
       await db.set(`${req.params.epid}_${req.params.epname}`, comments);
       res.json({ message: "message updated" });
-    }
+    },
   );
   router.delete("/comments/:epid/:epname/:comment_id/", async (req, res) => {
     // del comment
@@ -164,7 +164,7 @@ module.exports = (router, db) => {
     let comments =
       (await db.get(`${req.params.epid}_${req.params.epname}`)) || [];
     const theComment = comments.findIndex(
-      (e) => e.created_at == id || e.id == id
+      (e) => e.created_at == id || e.id == id,
     );
     if (userId !== comments[theComment].userId)
       return res
@@ -196,7 +196,7 @@ module.exports = (router, db) => {
       let comments =
         (await db.get(`${req.params.epid}_${req.params.epname}`)) || [];
       const theComment = comments.findIndex(
-        (e) => e.created_at == id || e.id == id
+        (e) => e.created_at == id || e.id == id,
       );
       if (
         Array.isArray(comments[theComment].user_who_disliked) &&
@@ -230,7 +230,7 @@ module.exports = (router, db) => {
       }
       // todo
       // res.status(419).end()
-    }
+    },
   );
   router.get("/db/serialize", async (req, res) => {
     // remake db to make sure
@@ -342,7 +342,7 @@ module.exports = (router, db) => {
         }),
       });
       res.status(201).json({ message: "OK NEW" });
-    }
+    },
   );
   // keep this at the end
   router.use((err, req, res, next) => {
