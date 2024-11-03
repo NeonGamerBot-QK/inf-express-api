@@ -107,6 +107,15 @@ module.exports = (router, db) => {
             },
           ],
         },
+        {
+          type: "context",
+          elements: [
+            {
+              type: "mrkdwn",
+              text: `Made by @Neon`,
+            },
+          ],
+        }
       ],
     };
     return slackInstance.makeRequest(`/chat.postMessage`, "POST", {
