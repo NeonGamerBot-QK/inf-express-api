@@ -115,7 +115,7 @@ module.exports = (router, db) => {
               text: `Made by @Neon`,
             },
           ],
-        }
+        },
       ],
     };
     return slackInstance.makeRequest(`/chat.postMessage`, "POST", {
