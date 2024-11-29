@@ -94,7 +94,7 @@ cmds.get(route).socket_handle(socket, io, cmds.get(route).db)
       socket.disconnect()
     }
       // 5 secs
-   }, 5_000)
+   }, 35_000)
 })
 const port = process.env.PORT || process.env.DEFAULT_PORT || process.env.SERVER_PORT || 3000
 server.listen(port, () => {
