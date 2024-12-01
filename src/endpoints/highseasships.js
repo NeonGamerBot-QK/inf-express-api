@@ -62,9 +62,9 @@ module.exports = (router, db) => {
       const { code } = req.query;
       const response = await slackInstaller.handleCallback(req, res, {
         afterInstallation: async (r) => {
-          console.log(r)
-        await db.set("user_"+r.user.id, r.user)
-        res.send(`Done! you may close this tab.`)
+          console.log(r);
+          await db.set("user_" + r.user.id, r.user);
+          res.send(`Done! you may close this tab.`);
         },
       });
       console.log("OAuth response:", response, req.session);
@@ -108,16 +108,15 @@ module.exports = (router, db) => {
     rateLimit({ windowMs: 5000, limit: 3 }),
     async (req, res) => {
       // todo check if the user has been authed with me
-      if(!req.headers["x-user-id"]){
+      if (!req.headers["x-user-id"]) {
         return res.status(401).json({
           status: 401,
           message: "Unauthorized",
         });
-
       }
-   
-      const user = await db.get("user_"+req.headers["x-user-id"])
-      if(!user){
+
+      const user = await db.get("user_" + req.headers["x-user-id"]);
+      if (!user) {
         return res.status(401).json({
           status: 401,
           message: "Unauthorized",
@@ -129,10 +128,10 @@ module.exports = (router, db) => {
       } else {
         body.userId = req.headers["X-User-Id"] || req.headers["x-user-id"];
       }
-      const ship = (await db.get("ships") || []).find(
+      const ship = ((await db.get("ships")) || []).find(
         (s) => s.repo === body.repo || s.demo === body.demo,
       );
-      console.log(user, body, ship)
+      console.log(user, body, ship);
       await client.chat.postMessage({
         text: `um this is dev so just ignore this tbh\n\`\`\`${body.vote}\`\`\``,
         channel: `C0833U384G2`,
