@@ -17,6 +17,7 @@
     "@keyv/sqlite": "^3.6.7",
     "@sentry/node": "^8.41.0",
     "@sentry/profiling-node": "^8.41.0",
+    "@slack/oauth": "^3.0.1",
     "@slack/web-api": "^7.7.0",
     "cors": "latest",
     "dotenv": "^16.4.5",
