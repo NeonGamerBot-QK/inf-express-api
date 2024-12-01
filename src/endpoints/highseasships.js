@@ -11,6 +11,7 @@ module.exports = (router, db) => {
   const slackInstaller = new InstallProvider({
     clientId: process.env.SLACK_CLIENT_ID,
     clientSecret: process.env.SLACK_CLIENT_SECRET,
+    stateVerification: false,
     stateSecret: "random-secret-", // Use a secure random string
     redirectUri: process.env.SLACK_REDIRECT_URI,
   });
