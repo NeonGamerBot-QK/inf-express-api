@@ -27,13 +27,13 @@ module.exports = (router, db) => {
       message: "Ships added",
     });
   });
-  app.get("/slack/oauth", (req, res) => {
+  router.get("/slack/oauth", (req, res) => {
     const slackAuthURL = `https://slack.com/oauth/v2/authorize?client_id=${CLIENT_ID}&scope=users:read,chat:write&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
     res.redirect(slackAuthURL);
   });
 
   // Step 2: Handle OAuth callback from Slack
-  app.get("/slack/oauth/callback", async (req, res) => {
+  router.get("/slack/oauth/callback", async (req, res) => {
     const { code } = req.query;
 
     if (!code) {
