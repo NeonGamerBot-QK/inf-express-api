@@ -28,7 +28,7 @@ module.exports = (router, db) => {
     });
   });
   router.get("/slack/oauth", (req, res) => {
-    const slackAuthURL = `https://hackclub.slack.com/oauth?client_id=${CLIENT_ID}&scope=&user_scope=chat%3Awrite%2Cim%3Awrite%2Cusers%3Aread%2Cusers%3Aread.email&redirect_uri=${REDIRECT_URI}&state=&granular_bot_scope=1&single_channel=0&install_redirect=oauth&tracked=1&team=1`;
+    const slackAuthURL = `https://hackclub.slack.com/oauth?client_id=${CLIENT_ID}&scope=&user_scope=chat%3Awrite%2Cim%3Awrite%2Cusers%3Aread%2Cusers%3Aread.email&redirect_uri=${REDIRECT_URI}&state=`;
     res.redirect(slackAuthURL);
   });
 
