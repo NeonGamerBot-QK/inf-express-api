@@ -1,5 +1,9 @@
 const { rateLimit } = require("express-rate-limit").default;
 // default template
+// Slack app credentials from .env
+const CLIENT_ID = process.env.SLACK_CLIENT_ID;
+const CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET;
+const REDIRECT_URI = process.env.SLACK_REDIRECT_URI;
 module.exports = (router, db) => {
   const webclient = require("@slack/web-api");
   const client = new webclient.WebClient(process.env.SLACK_ZEON_TOKEN);
@@ -23,6 +27,41 @@ module.exports = (router, db) => {
       message: "Ships added",
     });
   });
+app.get('/slack/oauth', (req, res) => {
+  const slackAuthURL = `https://slack.com/oauth/v2/authorize?client_id=${CLIENT_ID}&scope=users:read,chat:write&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+  res.redirect(slackAuthURL);
+});
+
+// Step 2: Handle OAuth callback from Slack
+app.get('/slack/oauth/callback', async (req, res) => {
+  const { code } = req.query;
+
+  if (!code) {
+    return res.status(400).send('No code provided.');
+  }
+
+  try {
+    // Exchange the code for an access token
+    const response = await axios.post('https://slack.com/api/oauth.v2.access', null, {
+      params: {
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        code: code,
+        redirect_uri: REDIRECT_URI,
+      },
+    });
+
+    if (response.data.ok) {
+      const { access_token, team } = response.data;
+      res.send(`OAuth successful! Team: ${team.name}, Access Token: ${access_token}`);
+    } else {
+      res.status(400).send(`Error: ${response.data.error}`);
+    }
+  } catch (error) {
+    console.error('Error during OAuth:', error.message);
+    res.status(500).send('Internal Server Error');
+  }
+});
   router.post("/add_ship", async (req, res) => {
     if (req.headers.authorization !== process.env.SLACK_ZEON_AUTH) {
       return res.status(401).json({
