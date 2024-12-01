@@ -38,18 +38,21 @@ module.exports = (router, db) => {
   router.get("/slack/oauth", async (req, res) => {
     try {
       const state = "random-secret-";
-      const url = await slackInstaller.generateInstallUrl({
-        scopes: [],
-        
-        // state: state,
-        // scopes: ["chat:write", "im:write", "users:read", "users:read.email"], // Update with your required scopes
-        userScopes: [
-          "chat:write",
-          "im:write",
-          "users:read",
-          "users:read.email",
-        ], // Optional, for user token scopes
-      }, false);
+      const url = await slackInstaller.generateInstallUrl(
+        {
+          scopes: [],
+
+          // state: state,
+          // scopes: ["chat:write", "im:write", "users:read", "users:read.email"], // Update with your required scopes
+          userScopes: [
+            "chat:write",
+            "im:write",
+            "users:read",
+            "users:read.email",
+          ], // Optional, for user token scopes
+        },
+        false,
+      );
       res.redirect(url);
     } catch (error) {
       console.error("Error generating install URL:", error);
