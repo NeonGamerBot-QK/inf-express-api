@@ -12,9 +12,7 @@ module.exports = (router, db) => {
     clientId: process.env.SLACK_CLIENT_ID,
     clientSecret: process.env.SLACK_CLIENT_SECRET,
     stateSecret:
-      "random-secret-" +
-      Math.random().toString() +
-      require("crypto").randomUUID(), // Use a secure random string
+      "random-secret-", // Use a secure random string
     redirectUri: process.env.SLACK_REDIRECT_URI,
   });
   router.all("/", (req, res) =>
