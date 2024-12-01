@@ -137,14 +137,23 @@ module.exports = (router, db) => {
       );
       console.log(user, body, ship);
       await client.chat.postMessage({
-        text: `um this is dev so just ignore this tbh\n\`\`\`${body.vote}\`\`\``,
+        text: `[DEV]\nVote written by ${body.userId == 'Anon' ?  `Anon`: `<@${user.id}>`} for ship by <@${ship.userId}>\n\`\`\`${body.vote}\`\`\``,
         channel: `C0833U384G2`,
       });
+      if(body.send_it_to_user) {
+        const uclient = new webclient.WebClient(user.token)
+        // open that dm first!
+      const responseeeee =   await uclient.conversations.open({
+          users: ship.userId,
+        })
+        await uclient.chat.postMessage({
+          text: `Hey! i voted for one of your projects!\n\`\`\`${body.vote}\`\`\``,
+          channel: responseeeee.channel.id,
+        });
+      }
     },
   );
-  //todo slack oauth2 :heavysob:
   // also anayltics
-  // ratelimits
   //
 };
 module.exports.socket_handle = (socket) => {
