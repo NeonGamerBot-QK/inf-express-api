@@ -1,4 +1,5 @@
 require('dotenv').config()
+require('./modules/sentry')
 const express = require('express')
 const http = require('http')
 const app = express()
@@ -9,7 +10,10 @@ const fs = require('fs')
 const { exec } = require('child_process')
 const path = require('path')
 const { randomUUID } = require('crypto')
+const Sentry = require("@sentry/node");
+
 const server = http.createServer(app);
+
 const io = require('socket.io')(server, {
 cors: { origin: '*' }
 });
@@ -60,6 +64,9 @@ for (const file of fs.readdirSync(path.join(__dirname, 'endpoints'))) {
 
   app.use(`/api/${name}`, router)
 }
+// The error handler must be registered before any other error middleware and after all controllers
+Sentry.setupExpressErrorHandler(app);
+
 app.use((req, res, next) => {
   res.status(404).send({
     status: 404,
