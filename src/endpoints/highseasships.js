@@ -12,7 +12,7 @@ module.exports = (router, db) => {
     clientId: process.env.SLACK_CLIENT_ID,
     clientSecret: process.env.SLACK_CLIENT_SECRET,
     stateVerification: false,
-    stateSecret: "random-secret-", // Use a secure random string
+    // stateSecret: "random-secret-", // Use a secure random string
     redirectUri: process.env.SLACK_REDIRECT_URI,
   });
   router.all("/", (req, res) =>
@@ -40,7 +40,8 @@ module.exports = (router, db) => {
       const state = "random-secret-";
       const url = await slackInstaller.generateInstallUrl({
         scopes: [],
-        state: state,
+        
+        // state: state,
         // scopes: ["chat:write", "im:write", "users:read", "users:read.email"], // Update with your required scopes
         userScopes: [
           "chat:write",
@@ -48,7 +49,7 @@ module.exports = (router, db) => {
           "users:read",
           "users:read.email",
         ], // Optional, for user token scopes
-      });
+      }, false);
       res.redirect(url);
     } catch (error) {
       console.error("Error generating install URL:", error);
