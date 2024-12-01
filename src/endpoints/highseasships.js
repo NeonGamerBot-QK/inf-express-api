@@ -60,12 +60,12 @@ module.exports = (router, db) => {
   router.get("/slack/oauth/callback", async (req, res) => {
     try {
       const { code } = req.query;
-      const response = await slackInstaller.handleCallback(req,res)
-      
+      const response = await slackInstaller.handleCallback(req, res);
+
       console.log("OAuth response:", response, req.session);
       // await slackInstaller.authorize({ })
 
-//      res.send("Slack OAuth completed successfully!");
+      //      res.send("Slack OAuth completed successfully!");
     } catch (error) {
       console.error("OAuth callback error:", error);
       res.status(500).send("OAuth callback error");
