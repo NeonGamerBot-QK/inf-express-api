@@ -36,8 +36,10 @@ module.exports = (router, db) => {
   });
   router.get("/slack/oauth", async (req, res) => {
     try {
+      const state = "random-secret-"
       const url = await slackInstaller.generateInstallUrl({
         scopes: [],
+        state: state,
         // scopes: ["chat:write", "im:write", "users:read", "users:read.email"], // Update with your required scopes
         userScopes: [
           "chat:write",
@@ -57,7 +59,9 @@ module.exports = (router, db) => {
   router.get("/slack/oauth/callback", async (req, res) => {
     try {
       const { code } = req.query;
-      const response = await slackInstaller.handleCallback(req, res);
+      const response = await slackInstaller.handleCallback(req, res, {
+        afterInstallation: async (r) => console.log(r),
+      });
 
       console.log("OAuth response:", response, req.session);
       // await slackInstaller.authorize({ })
