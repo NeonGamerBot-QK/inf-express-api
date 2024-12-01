@@ -40,6 +40,7 @@ module.exports = (router, db) => {
   router.get("/slack/oauth", async (req, res) => {
     try {
       const url = await slackInstaller.generateInstallUrl({
+      scopes: [],
         // scopes: ["chat:write", "im:write", "users:read", "users:read.email"], // Update with your required scopes
         userScopes: [
           "chat:write",
