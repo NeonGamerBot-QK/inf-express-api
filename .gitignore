@@ -128,3 +128,4 @@ dist
 *.db
 ships.json
 parsed-ships.json
+old-parsed-ships.json

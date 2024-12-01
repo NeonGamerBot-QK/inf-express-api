@@ -12,6 +12,8 @@ const unescapeHTML = (str) => {
     .replace(/&#39;/g, "'");
 };
 let skipped = [];
+const oldShips = JSON.parse(fs.readFileSync("old-parsed-ships.json"));
+// ships = ships.filter((ship) => !oldShips.find((s) => s.repo === ship.repo));
 for (const ship of ships) {
   // console.log(ship.blocks)
   // lets extract the data :3

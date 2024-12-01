@@ -1,6 +1,8 @@
 const { rateLimit } = require("express-rate-limit").default;
 // default template
 module.exports = (router, db) => {
+  const webclient = require("@slack/web-api");
+const client = new webclient.WebClient(process.env.SLACK_ZEON_TOKEN);
   router.all("/", (req, res) =>
     res.json({
       message: "hi",
@@ -48,6 +50,19 @@ module.exports = (router, db) => {
       message: ship,
     });
   });
+  router.post('/send_vote', rateLimit({ windowMs: 5000, limit: 3 }), async (req, res) => {
+    // todo check if the user has been authed with me
+    let body = req.body;
+    if(body.anon) {
+      body.userId = `Anon`
+    } else {
+      body.userId = req.headers["X-User-Id"] || req.headers["x-user-id"];
+    }
+await client.chat.postMessage({
+  text: `um this is dev so just ignore this tbh\n\`\`\`${body.vote}\`\`\``,
+  channel: `C0833U384G2`
+})
+  })
   //todo slack oauth2 :heavysob:
   // also anayltics
   // ratelimits
