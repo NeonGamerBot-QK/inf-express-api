@@ -36,7 +36,7 @@ module.exports = (router, db) => {
   });
   router.get("/slack/oauth", async (req, res) => {
     try {
-      const state = "random-secret-"
+      const state = "random-secret-";
       const url = await slackInstaller.generateInstallUrl({
         scopes: [],
         state: state,
