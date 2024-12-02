@@ -18,7 +18,7 @@ module.exports = (router, db) => {
   router.all("/", (req, res) =>
     res.json({
       message: "hi",
-    }),
+    })
   );
   // my endpoint only
   router.post("/mass_add_ships", (req, res) => {
@@ -51,7 +51,7 @@ module.exports = (router, db) => {
             "users:read.email",
           ], // Optional, for user token scopes
         },
-        false,
+        false
       );
       res.redirect(url);
     } catch (error) {
@@ -100,7 +100,7 @@ module.exports = (router, db) => {
     const demoURL = req.query.demo;
 
     const ship = (await db.get("ships")).find(
-      (s) => s.repo === repoURL || s.demo === demoURL,
+      (s) => s.repo === repoURL || s.demo === demoURL
     );
     res.json({
       status: 200,
@@ -133,11 +133,17 @@ module.exports = (router, db) => {
         body.userId = req.headers["X-User-Id"] || req.headers["x-user-id"];
       }
       const ship = ((await db.get("ships")) || []).find(
-        (s) => s.repo === body.repo || s.demo === body.demo,
+        (s) => s.repo === body.repo || s.demo === body.demo
       );
+      if (!ship)
+        return res.status(400).json({
+          message: `Ship not found x.x`,
+        });
       console.log(user, body, ship);
       await client.chat.postMessage({
-        text: `[DEV]\nVote written by ${body.userId == "Anon" ? `Anon` : `<@${user.id}>`} for ship by <@${ship.userId}>\n\`\`\`${body.vote}\`\`\``,
+        text: `[DEV]\nVote written by ${
+          body.userId == "Anon" ? `Anon` : `<@${user.id}>`
+        } for ship by <@${ship.userId}>\n\`\`\`${body.vote}\`\`\``,
         channel: `C0833U384G2`,
       });
       if (body.send_it_to_user) {
@@ -151,7 +157,7 @@ module.exports = (router, db) => {
           channel: responseeeee.channel.id,
         });
       }
-    },
+    }
   );
   // also anayltics
   //
@@ -160,7 +166,7 @@ module.exports.socket_handle = (socket) => {
   socket.on("query ship", async (data) => {
     // find the ship in the db
     const ship = (await db.get("ships")).find(
-      (s) => s.repo === data.repo && s.demo === data.demo,
+      (s) => s.repo === data.repo && s.demo === data.demo
     );
   });
 };
