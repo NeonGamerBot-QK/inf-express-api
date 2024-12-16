@@ -67,6 +67,10 @@ for (const file of fs.readdirSync(path.join(__dirname, "endpoints"))) {
 
   app.use(`/api/${name}`, router);
 }
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
+});
+
 // The error handler must be registered before any other error middleware and after all controllers
 Sentry.setupExpressErrorHandler(app);
 
@@ -89,7 +93,7 @@ io.on("connection", (socket) => {
   let connectedInTime = false;
   socket.emit(
     "route_query",
-    JSON.stringify({ request: "route", respond: "route_response_" + id }),
+    JSON.stringify({ request: "route", respond: "route_response_" + id })
   );
   socket.on("route_response_" + id, (route) => {
     if (route && cmds.get(route)) {
