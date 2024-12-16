@@ -93,7 +93,7 @@ io.on("connection", (socket) => {
   let connectedInTime = false;
   socket.emit(
     "route_query",
-    JSON.stringify({ request: "route", respond: "route_response_" + id })
+    JSON.stringify({ request: "route", respond: "route_response_" + id }),
   );
   socket.on("route_response_" + id, (route) => {
     if (route && cmds.get(route)) {
