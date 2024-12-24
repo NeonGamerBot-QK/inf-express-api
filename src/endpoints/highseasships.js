@@ -107,21 +107,20 @@ module.exports = (router, db) => {
       message: ship,
     });
   });
-  router.get('/delete_user_data', async (req, res) => {
-    if(req.query.a == process.env.SLACK_ZEON_AUTH) {
-      db.delete('user_' + req.query.userId)
-res.status(200).json({
-  status: 200,
-  message: "User data deleted",
-});
+  router.get("/delete_user_data", async (req, res) => {
+    if (req.query.a == process.env.SLACK_ZEON_AUTH) {
+      db.delete("user_" + req.query.userId);
+      res.status(200).json({
+        status: 200,
+        message: "User data deleted",
+      });
     } else {
       res.status(401).json({
         status: 401,
         message: "Unauthorized",
       });
     }
-
-  })
+  });
   router.post(
     "/send_vote",
     rateLimit({ windowMs: 5000, limit: 3 }),
