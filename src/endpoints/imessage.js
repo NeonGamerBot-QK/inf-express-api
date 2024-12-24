@@ -1,7 +1,7 @@
 // they are not secret lol
 const forwardUrls = [
   "https://slack.mybot.saahild.com/imessage",
-  "https://mybot.saahild.com/imessage",
+  "https://mybot.saahild.com/irl/imessage",
 ];
 // default template
 module.exports = (router, db) => {
