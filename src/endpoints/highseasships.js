@@ -138,8 +138,8 @@ module.exports = (router, db) => {
       const ship = {
         repo: body.repo,
         demo: body.demo,
-      userId: body.author,
-        title: body.title
+        userId: body.author,
+        title: body.title,
       };
 
       // good news, we dont need the db :P, data will be kept for the sillies :3
@@ -151,10 +151,10 @@ module.exports = (router, db) => {
       await client.chat.postMessage({
         text: `[DEV]\nVote written by ${
           body.userId == "Anon" ? `Anon` : `<@${user.id}>`
-        } for *${ship.title}* by <@${ship.userId}>\n\`\`\`${body.vote.replace(/`/, String.fromCharCode(8203) )}\`\`\``,
+        } for *${ship.title}* by <@${ship.userId}>\n\`\`\`${body.vote.replace(/`/, String.fromCharCode(8203))}\`\`\``,
         channel: `C0833U384G2`,
       });
-      if (body.send_it_to_user &&  body.userId !== "Anon") {
+      if (body.send_it_to_user && body.userId !== "Anon") {
         const uclient = new webclient.WebClient(user.token);
         // open that dm first!
         const responseeeee = await uclient.conversations.open({
@@ -164,12 +164,12 @@ module.exports = (router, db) => {
           text: `Hey! i voted for your ship!\n\`\`\`${body.vote}\`\`\``,
           channel: responseeeee.channel.id,
         });
-      } else if(body.send_it_to_user &&  body.userId === "Anon") {
+      } else if (body.send_it_to_user && body.userId === "Anon") {
         // #ifthisgetsabusedimacry
         client.chat.postMessage({
           text: `Hey! an anon user voted for your ship and _really_ wanted to tell you about it!! [dev, this is prob neon tbh]\n\`\`\`${body.vote}\`\`\`\n\n if this was spammed to you please dm screenshots to @Neon asap!!`,
-          channel: ship.userId
-        })
+          channel: ship.userId,
+        });
       }
     },
   );
