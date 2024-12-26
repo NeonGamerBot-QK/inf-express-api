@@ -18,7 +18,7 @@ module.exports = (router, db) => {
   router.all("/", (req, res) =>
     res.json({
       message: "hi",
-    }),
+    })
   );
   // my endpoint only
   router.post("/mass_add_ships", (req, res) => {
@@ -51,7 +51,7 @@ module.exports = (router, db) => {
             "users:read.email",
           ], // Optional, for user token scopes
         },
-        false,
+        false
       );
       res.redirect(url);
     } catch (error) {
@@ -100,7 +100,7 @@ module.exports = (router, db) => {
     const demoURL = req.query.demo;
 
     const ship = (await db.get("ships")).find(
-      (s) => s.repo === repoURL || s.demo === demoURL,
+      (s) => s.repo === repoURL || s.demo === demoURL
     );
     res.json({
       status: 200,
@@ -163,9 +163,12 @@ module.exports = (router, db) => {
       //   });
       console.log(user, body, ship);
       await client.chat.postMessage({
-        text: `[DEV]\nVote written by ${
+        text: ` \nVote written by ${
           body.userId == "Anon" ? `Anon` : `<@${user.id}>`
-        } for *${ship.title}* by <@${ship.userId}>\n\`\`\`${body.vote.replace(/`/, String.fromCharCode(8203))}\`\`\``,
+        } for *${ship.title}* by <@${ship.userId}>\n\`\`\`${body.vote.replace(
+          /`/,
+          String.fromCharCode(8203)
+        )}\`\`\``,
         channel: `C0833U384G2`,
       });
       if (body.send_it_to_user && body.userId !== "Anon") {
@@ -181,11 +184,11 @@ module.exports = (router, db) => {
       } else if (body.send_it_to_user && body.userId === "Anon") {
         // #ifthisgetsabusedimacry
         client.chat.postMessage({
-          text: `Hey! an anon user voted for your ship and _really_ wanted to tell you about it!! [dev, this is prob neon tbh]\n\`\`\`${body.vote}\`\`\`\n\n if this was spammed to you please dm screenshots to @Neon asap!!`,
+          text: `Hey! an anon user voted for your ship and _really_ wanted to tell you about it!!\n\`\`\`${body.vote}\`\`\`\n\n if this was spammed to you please dm screenshots to @Neon asap!!`,
           channel: ship.userId,
         });
       }
-    },
+    }
   );
   // also anaylticsbody.send_it_to_user &&  body.userId !== "Anon"
   // uhh i dont need this if there in a channel smh
@@ -194,7 +197,7 @@ module.exports.socket_handle = (socket) => {
   socket.on("query ship", async (data) => {
     // find the ship in the db
     const ship = (await db.get("ships")).find(
-      (s) => s.repo === data.repo && s.demo === data.demo,
+      (s) => s.repo === data.repo && s.demo === data.demo
     );
   });
 };
