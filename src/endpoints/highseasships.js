@@ -154,6 +154,7 @@ module.exports = (router, db) => {
         demo: body.demo,
         userId: body.author,
         title: body.title,
+        // in v0.0.3 it will show the matchup is against
       };
 
       // good news, we dont need the db :P, data will be kept for the sillies :3
@@ -171,6 +172,7 @@ module.exports = (router, db) => {
         )}\`\`\``,
         channel: `C0833U384G2`,
       });
+
       if (body.send_it_to_user && body.userId !== "Anon") {
         const uclient = new webclient.WebClient(user.token);
         // open that dm first!
