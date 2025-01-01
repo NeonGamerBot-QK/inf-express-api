@@ -50,7 +50,7 @@ module.exports = (router, db) => {
     oldInstance.push(req.body);
     db.set(`messages_recived`, oldInstance);
     for (let i = 0; i < forwardUrls.length; i++) {
-     await fetch(forwardUrls[i], {
+      await fetch(forwardUrls[i], {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
