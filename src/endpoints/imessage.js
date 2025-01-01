@@ -26,7 +26,7 @@ function automatedMessages(db) {
 }
 // default template
 module.exports = (router, db) => {
-  const automationSystem = new automatedMessages();
+  const automationSystem = new automatedMessages(db);
   router.use((req, res, next) => {
     if (req.headers["x-imessage-token"] !== process.env.IMESSAGE_TOKEN)
       return res.status(401).json({
