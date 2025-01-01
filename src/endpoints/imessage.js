@@ -19,6 +19,7 @@ function automatedMessages(db) {
             message: signalMessage,
             to: n,
           });
+          await db.set("messages_to_send", _old);
         }
       }
     },
