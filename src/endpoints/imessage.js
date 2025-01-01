@@ -8,7 +8,7 @@ function automatedMessages(db) {
   const phonenumbers = process.env.IMESSAGE_AUTOMATED_NUMBERS.split(",");
   return {
     async onReceive(message) {
-      console.log(phonenumbers);
+      console.log(phonenumbers, message);
       // check if the # is in the list
       if (phonenumbers.some((n) => message.from.includes(n))) {
         for (const n of phonenumbers.filter((n) => message.from.includes(n))) {
@@ -59,6 +59,7 @@ module.exports = (router, db) => {
         body: JSON.stringify(req.body),
       }).catch((e) => {});
     }
+    console.log(req.body);
     await automationSystem.onReceive(req.body);
     res.status(200).end();
   });
