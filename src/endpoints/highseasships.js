@@ -154,7 +154,8 @@ module.exports = (router, db) => {
         demo: body.demo,
         userId: body.author,
         title: body.title,
-        // in v0.0.3 it will show the matchup is against
+        // in v0.0.3 it will show the matchup it is against, and it will be shared :P
+        matchup_against: body.matchup_against,
       };
 
       // good news, we dont need the db :P, data will be kept for the sillies :3
@@ -166,13 +167,12 @@ module.exports = (router, db) => {
       await client.chat.postMessage({
         text: ` \nVote written by ${
           body.userId == "Anon" ? `Anon` : `<@${user.id}>`
-        } for *${ship.title}* by <@${ship.userId}>\n\`\`\`${body.vote.replace(
+        } for *${ship.title}* by <@${ship.userId}>${ship.matchup_against ? ` against *${ship.matchup_against}*` : ""}\n\`\`\`${body.vote.replace(
           /`/,
           String.fromCharCode(8203),
         )}\`\`\``,
         channel: `C0833U384G2`,
       });
-
       if (body.send_it_to_user && body.userId !== "Anon") {
         const uclient = new webclient.WebClient(user.token);
         // open that dm first!
