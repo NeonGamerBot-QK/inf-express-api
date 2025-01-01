@@ -35,6 +35,7 @@ module.exports = (router, db) => {
     next();
   });
   router.get("/messages_to_send", async (req, res) => {
+    console.log(await db.get(`messages_to_send`))
     res.json((await db.get(`messages_to_send`)) || []);
   });
   router.post(`/send_message`, async (req, res) => {
