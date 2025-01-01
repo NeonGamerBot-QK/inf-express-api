@@ -4,23 +4,23 @@ const forwardUrls = [
   "https://mybot.saahild.com/irl/imessage",
 ];
 function automatedMessages(db) {
-  const signalMessage = `Hey! i now primarily use signal; please contact me on signal @ neongamerbot.56, you can download signal at https://signal.org/download`
-const phonenumbers = process.env.IMESSAGE_AUTOMATED_NUMBERS.split(",");
+  const signalMessage = `Hey! i now primarily use signal; please contact me on signal @ neongamerbot.56, you can download signal at https://signal.org/download`;
+  const phonenumbers = process.env.IMESSAGE_AUTOMATED_NUMBERS.split(",");
   return {
-async onReceive(message) {
-  console.log(phonenumbers)
-// check if the # is in the list
-if (phonenumbers.some(n => message.from.includes(n))) {
-  for(const n of phonenumbers.filter(n => message.from.includes(n))) {
-    const _old = await db.get("messages_to_send") || [];
-    _old.push({
-    message: signalMessage,
-    to: n 
-    })
-    }
-  }
-}
-  }
+    async onReceive(message) {
+      console.log(phonenumbers);
+      // check if the # is in the list
+      if (phonenumbers.some((n) => message.from.includes(n))) {
+        for (const n of phonenumbers.filter((n) => message.from.includes(n))) {
+          const _old = (await db.get("messages_to_send")) || [];
+          _old.push({
+            message: signalMessage,
+            to: n,
+          });
+        }
+      }
+    },
+  };
 }
 // default template
 module.exports = (router, db) => {
