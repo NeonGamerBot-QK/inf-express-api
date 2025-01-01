@@ -3,8 +3,27 @@ const forwardUrls = [
   "https://slack.mybot.saahild.com/imessage",
   "https://mybot.saahild.com/irl/imessage",
 ];
+function automatedMessages(db) {
+  const signalMessage = `Hey! i now primarily use signal; please contact me on signal @ neongamerbot.56`
+const phonenumbers = process.env.IMESSAGE_AUTOMATED_NUMBERS.split(",");
+  return {
+async onReceive(message) {
+// check if the # is in the list
+if (phonenumbers.some(n => message.from.includes(n))) {
+  for(const n of phonenumbers.filter(n => message.from.includes(n))) {
+    const _old = await db.get("messages_to_send") || [];
+    _old.push({
+    message: signalMessage,
+    to: n 
+    })
+    }
+  }
+}
+  }
+}
 // default template
 module.exports = (router, db) => {
+  const automationSystem = new automatedMessages();
   router.use((req, res, next) => {
     if (req.headers["x-imessage-token"] !== process.env.IMESSAGE_TOKEN)
       return res.status(401).json({
@@ -30,7 +49,7 @@ module.exports = (router, db) => {
     oldInstance.push(req.body);
     db.set(`messages_recived`, oldInstance);
     for (let i = 0; i < forwardUrls.length; i++) {
-      fetch(forwardUrls[i], {
+     await fetch(forwardUrls[i], {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,6 +58,7 @@ module.exports = (router, db) => {
         body: JSON.stringify(req.body),
       }).catch((e) => {});
     }
+    await automationSystem.onReceive(req.body);
     res.status(200).end();
   });
   router.get(`/messages_recived`, async (req, res) => {
