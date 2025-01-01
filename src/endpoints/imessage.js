@@ -11,7 +11,9 @@ function automatedMessages(db) {
       console.log(phonenumbers, message);
       // check if the # is in the list
       if (phonenumbers.some((n) => message.sender.includes(n))) {
-        for (const n of phonenumbers.filter((n) => message.sender.includes(n))) {
+        for (const n of phonenumbers.filter((n) =>
+          message.sender.includes(n),
+        )) {
           const _old = (await db.get("messages_to_send")) || [];
           _old.push({
             message: signalMessage,
