@@ -154,8 +154,8 @@ module.exports = (router, db) => {
         demo: body.demo,
         userId: body.author,
         title: body.title,
-        // in v0.0.3 it will show the matchup it is against, and it will be shared :P
-        matchup_against: body.matchup_against,
+        // in v0.0.3 it will show the matchup it is against, and it will be shared :P (ignore the spelling please)
+        matchup_against: body.mathchup_against || body.matchup_against,
       };
 
       // good news, we dont need the db :P, data will be kept for the sillies :3
