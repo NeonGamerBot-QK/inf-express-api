@@ -54,10 +54,12 @@ for (const file of fs.readdirSync(path.join(__dirname, "endpoints"))) {
   });
   // router.use()
   // run NON-async setup
+try {
   endpoint(router, db);
   if (endpoint.socket_handle) {
     cmds.set(name, endpoint);
   }
+} catch (e) {}
   endpoints.set(name, {
     db,
     name,
@@ -157,4 +159,10 @@ setInterval(() => {
   });
 }, 15000);
 // check this later
-//process.on(`unhandledException`, Sentry.captureException)
+process.on(`unhandledException`, (e) => {
+  Sentry.captureException(e);
+})
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  Sentry.captureException(reason);
+})

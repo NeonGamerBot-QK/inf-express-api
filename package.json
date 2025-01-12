@@ -30,7 +30,9 @@
     "node-fetch": "cjs",
     "nodemailer": "6.9.13",
     "socket.io": "latest",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "chart.js": "^3.9.1",
+    "chartjs-node-canvas": "^4.1.6"
   },
   "optionalDependencies": {
     "@keyv/etcd": "^1.2.1",
