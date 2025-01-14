@@ -10,6 +10,7 @@ const fs = require("fs");
 const { exec } = require("child_process");
 const path = require("path");
 const { randomUUID } = require("crypto");
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const Sentry = require("@sentry/node");
 
 const server = http.createServer(app);
@@ -22,6 +23,10 @@ app.use(express.json({ limit: "550mb" }));
 app.use(express.urlencoded({ extended: true }));
 // app.use(require('helmet')())
 app.use(require("cors")({ origin: "*" }));
+app.use('/api/slack',  createProxyMiddleware({
+  target: 'https://slack.com/api',
+  changeOrigin: true,
+}))
 const cmds = new Map();
 // app.set('view engine', 'ejs')
 // app.set('views', path.join(__dirname, 'views'))
