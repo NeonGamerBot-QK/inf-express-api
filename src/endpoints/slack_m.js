@@ -10,7 +10,7 @@ module.exports = (router, db) => {
       return res.status(403).json({ message: `You message body??` });
     const uclient = new webclient.WebClient(token);
     try {
-      const m = await uclient.postMessage(req.body);
+      const m = await uclient.chat.postMessage(req.body);
       res.json({ message: "OK", sent_message: m });
     } catch (e) {
       console.error(e);
