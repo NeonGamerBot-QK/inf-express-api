@@ -15,6 +15,7 @@
   "dependencies": {
     "@keyv/compress-gzip": "^1.2.3",
     "@keyv/sqlite": "^3.6.7",
+    "@loopback/openapi-v3": "^10.0.10",
     "@sentry/node": "^8.41.0",
     "@sentry/profiling-node": "^8.41.0",
     "@slack/oauth": "^3.0.1",
@@ -33,6 +34,7 @@
     "node-fetch": "cjs",
     "nodemailer": "6.9.13",
     "socket.io": "latest",
+    "swagger-autogen": "^2.23.7",
     "uuid": "^10.0.0"
   },
   "optionalDependencies": {
