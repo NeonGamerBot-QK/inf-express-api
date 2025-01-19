@@ -26,7 +26,8 @@ module.exports = (router, db) => {
 
     const uclient = new webclient.WebClient(token);
     const fp = await db.get("cache_p" + req.query.user);
-    if (Date.now() - fp.expires < 0) {
+
+    if (fp && Date.now() - fp.expires < 0) {
       return res.json({
         message: "OK CACHE",
         pronouns: fp.pronouns,
