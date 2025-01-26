@@ -8,7 +8,7 @@ module.exports = (router, db) => {
   // router.all('/', (req,res) => res.send('Hello, world!'))
   router.get("/random", async (req, res) => {
     const quotes = (await db.get("quotes")) || [];
-    res.json(quotes[Math.floor(Math.random() * quotes.length)]);
+    res.json({ quote: quotes[Math.floor(Math.random() * quotes.length)] });
   });
   router.delete("/clear", authed, async (req, res) => {
     await db.set("quotes", []);

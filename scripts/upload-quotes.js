@@ -10,7 +10,7 @@ fetch("https://api.saahild.com/api/quotesdb/add", {
     "Content-Type": "application/json",
     Authorization: process.env.IMESSAGE_TOKEN,
   },
-  body: quotes,
+  body: JSON.stringify(quotes),
 })
   .then((r) => r.json())
   .then(console.log);
