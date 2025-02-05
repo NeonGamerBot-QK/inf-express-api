@@ -14,4 +14,8 @@ module.exports = (router, db) => {
       message: "h",
     });
   });
+  router.get("/camera_alert", (req, res) => {
+    // TODO: spawn ring camera
+    res.status(501).end();
+  });
 };
