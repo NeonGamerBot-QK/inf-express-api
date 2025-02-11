@@ -18,7 +18,7 @@ module.exports = (router, db) => {
   router.all("/", (req, res) =>
     res.json({
       message: "hi",
-    }),
+    })
   );
   // my endpoint only
   router.post("/mass_add_ships", (req, res) => {
@@ -51,7 +51,7 @@ module.exports = (router, db) => {
             "users:read.email",
           ], // Optional, for user token scopes
         },
-        false,
+        false
       );
       res.redirect(url);
     } catch (error) {
@@ -100,7 +100,7 @@ module.exports = (router, db) => {
     const demoURL = req.query.demo;
 
     const ship = (await db.get("ships")).find(
-      (s) => s.repo === repoURL || s.demo === demoURL,
+      (s) => s.repo === repoURL || s.demo === demoURL
     );
     res.json({
       status: 200,
@@ -125,6 +125,7 @@ module.exports = (router, db) => {
     "/send_vote",
     rateLimit({ windowMs: 5000, limit: 3 }),
     async (req, res) => {
+      return res.status(419).end();
       // todo check if the user has been authed with me
       if (!req.headers["x-user-id"]) {
         return res.status(401).json({
@@ -167,10 +168,9 @@ module.exports = (router, db) => {
       await client.chat.postMessage({
         text: ` \nVote written by ${
           body.userId == "Anon" ? `Anon` : `<@${user.id}>`
-        } for *${ship.title}* by <@${ship.userId}>${ship.matchup_against ? ` against *${ship.matchup_against}*` : ""}\n\`\`\`${body.vote.replace(
-          /`/,
-          String.fromCharCode(8203),
-        )}\`\`\``,
+        } for *${ship.title}* by <@${ship.userId}>${
+          ship.matchup_against ? ` against *${ship.matchup_against}*` : ""
+        }\n\`\`\`${body.vote.replace(/`/, String.fromCharCode(8203))}\`\`\``,
         channel: `C0833U384G2`,
       });
       if (body.send_it_to_user && body.userId !== "Anon") {
@@ -190,7 +190,7 @@ module.exports = (router, db) => {
           channel: ship.userId,
         });
       }
-    },
+    }
   );
   // also anaylticsbody.send_it_to_user &&  body.userId !== "Anon"
   // uhh i dont need this if there in a channel smh
@@ -199,7 +199,7 @@ module.exports.socket_handle = (socket) => {
   socket.on("query ship", async (data) => {
     // find the ship in the db
     const ship = (await db.get("ships")).find(
-      (s) => s.repo === data.repo && s.demo === data.demo,
+      (s) => s.repo === data.repo && s.demo === data.demo
     );
   });
 };
