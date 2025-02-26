@@ -14,6 +14,16 @@ module.exports = (router, db) => {
       message: "h",
     });
   });
+  router.post('/matrix/toggle_sleep',async (req, res) => {
+    const cv = await db.get("sleeping") || false,
+    await db.set("sleeping", !cv)
+    res.status(200).end()
+  })
+  router.get("/matrix/status", async (req, res) => {
+    res.json({
+      is_sleeping: (await db.get("sleeping")) || false,
+    });
+  });
   router.get("/camera_alert", (req, res) => {
     // TODO: spawn ring camera
     res.status(501).end();
