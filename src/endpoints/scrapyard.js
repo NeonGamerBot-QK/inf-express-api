@@ -6,18 +6,17 @@ module.exports = (router, db) => {
     const paymentLink = await sclient.paymentLinks.create({
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "Test Product",
-            },
-            unit_amount: 1000, // Amount in cents (e.g., $10.00)
-          },
-          quantity: 1,
+         price: "",
+        quantity: 1,
         },
       ],
       //   mode: "payment",
     });
     res.redirect(paymentLink);
   });
+  router.get("/list", async (req, res) => {
+    // list all price objs
+    const prices = await sclient.prices.list();
+    res.json(prices);
+  })
 };
