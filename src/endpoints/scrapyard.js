@@ -6,7 +6,7 @@ module.exports = (router, db) => {
     const paymentLink = await sclient.paymentLinks.create({
       line_items: [
         {
-         price: "",
+         price: "prod_Rrjw0rKdiZ2v3I",
         quantity: 1,
         },
       ],
