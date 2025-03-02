@@ -16,7 +16,7 @@ module.exports = (router, db) => {
           quantity: 1,
         },
       ],
-    //   mode: "payment",
+      //   mode: "payment",
     });
     res.redirect(paymentLink);
   });
