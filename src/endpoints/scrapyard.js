@@ -13,7 +13,7 @@ module.exports = (router, db) => {
       ],
       //   mode: "payment",
     });
-    console.log(paymentLink)
+    console.log(paymentLink);
     res.redirect(paymentLink.url);
   });
   router.get("/list", async (req, res) => {
