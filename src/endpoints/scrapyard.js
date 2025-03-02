@@ -6,8 +6,8 @@ module.exports = (router, db) => {
     const paymentLink = await sclient.paymentLinks.create({
       line_items: [
         {
-          price: "prod_Rrjw0rKdiZ2v3I",
-          quantity: 1,
+          price: "price_1Qy0XnDwtWbetrx50uWeoalD",
+          quantity: req.query.qty ? parseFloat(req.query.qty) : 1,
         },
       ],
       //   mode: "payment",
@@ -19,4 +19,5 @@ module.exports = (router, db) => {
     const prices = await sclient.prices.list();
     res.json(prices);
   });
+  
 };
