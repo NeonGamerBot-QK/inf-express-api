@@ -1,5 +1,6 @@
 const Stripe = require("stripe").Stripe;
 const sclient = new Stripe(process.env.ECHOS_TOKEN);
+const webclient = require("@slack/web-api");
 
 module.exports = (router, db) => {
   router.get("/pay", async (req, res) => {
@@ -20,4 +21,9 @@ module.exports = (router, db) => {
     const prices = await sclient.prices.list();
     res.json(prices);
   });
+  router.post('/oncharge', async (req,res) => {
+    // oh wow someone actually spent 10$ on ts
+    // pm0
+    console.log(req.body, `ts pmo`)
+  })
 };
