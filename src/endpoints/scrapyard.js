@@ -12,7 +12,8 @@ module.exports = (router, db) => {
       ],
       //   mode: "payment",
     });
-    res.redirect(paymentLink);
+    console.log(paymentLink)
+    res.redirect(paymentLink.url);
   });
   router.get("/list", async (req, res) => {
     // list all price objs
