@@ -9,6 +9,6 @@ const price = sclient.prices.create({
   },
 });
 
-price.then(p => {
-    console.log(p, `created!`);
-})
+price.then((p) => {
+  console.log(p, `created!`);
+});
