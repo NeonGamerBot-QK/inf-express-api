@@ -19,5 +19,4 @@ module.exports = (router, db) => {
     const prices = await sclient.prices.list();
     res.json(prices);
   });
-  
 };
