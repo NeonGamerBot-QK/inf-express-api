@@ -21,9 +21,9 @@ module.exports = (router, db) => {
     const prices = await sclient.prices.list();
     res.json(prices);
   });
-  router.post('/oncharge', async (req,res) => {
+  router.post("/oncharge", async (req, res) => {
     // oh wow someone actually spent 10$ on ts
     // pm0
-    console.log(req.body, `ts pmo`)
-  })
+    console.log(req.body, `ts pmo`);
+  });
 };
