@@ -34,6 +34,7 @@
     "node-fetch": "cjs",
     "nodemailer": "6.9.13",
     "socket.io": "latest",
+    "stripe": "^17.7.0",
     "swagger-autogen": "^2.23.7",
     "uuid": "^10.0.0"
   },
