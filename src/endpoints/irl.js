@@ -2,7 +2,7 @@
 module.exports = (router, db) => {
   router.use((req, res, next) => {
     if (
-      req.headers["authorization"] !== process.env.IMESSAGE_TOKEN ||
+      req.headers["authorization"] !== process.env.IMESSAGE_TOKEN &&
       req.query.a !== process.env.IMESSAGE_TOKEN
     )
       return res.status(401).json({
