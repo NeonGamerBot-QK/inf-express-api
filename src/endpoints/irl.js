@@ -25,7 +25,7 @@ module.exports = (router, db) => {
   });
   router.get("/matrix/status", async (req, res) => {
     const mybot_data = await fetch(
-      "https://mybot.saahild.com/irl/matrix?a=" + process.env.IMESSAGE_TOKEN
+      "https://mybot.saahild.com/irl/matrix?a=" + process.env.IMESSAGE_TOKEN,
     ).then((r) => r.json());
     res.json({
       is_sleeping: (await db.get("sleeping")) || false,
