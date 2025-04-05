@@ -15,7 +15,7 @@ module.exports = (router, db) => {
     console.log(req.body);
     if (!req.body.captcha_id) {
       const captchaID = await fetch(
-        "https://api-for-rpiysws.saahild.com/captcha/",
+        "https://api-for-rpiysws.saahild.com/captcha/"
       )
         .then((r) => r.json())
         .then((d) => d.id);
@@ -30,7 +30,7 @@ module.exports = (router, db) => {
             <input type="hidden" name="captcha_id" value="${captchaID}" />
             ${Object.entries(req.body)
               .map(
-                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`,
+                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`
               )
               .join("\n")}
               <button type="submit">submit</button>
@@ -46,12 +46,13 @@ module.exports = (router, db) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: req.body["captcha-code"] }),
-      },
+      }
     );
     validation.json().then(console.log);
-    if (validation.status !== "200") {
+    if (validation.status !== 200) {
       return res.send(`<html>
             <h1> Please complete this captcha</h1>
+            <p><b>You got it wrong btw</b></p>
             <img src="${`https://api-for-rpiysws.saahild.com/captcha/${req.body.captcha_id}/render`}" />
           <form method="POST">
             <label>Captcha:</label>
@@ -62,7 +63,7 @@ module.exports = (router, db) => {
             ${Object.entries(req.body)
               .filter(([k]) => !k.startsWith("captcha"))
               .map(
-                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`,
+                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`
               )
               .join("\n")}
               <button type="submit">submit</button>
@@ -71,5 +72,18 @@ module.exports = (router, db) => {
     }
     // ok since its valid now... send the stuff
     console.log(`A OK to send!`);
+    // send it thru
+    fetch(process.env.SLACK_WEBHOOK_SWIRL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+        body: JSON.stringify({
+            message: req.body.message,
+            name: req.body.name
+        })
+    }).then((r) => {
+        res.redirect("https://app.slack.com/client/T0266FRGM/C08M0GFCRGA")
+    })
   });
 };
