@@ -74,16 +74,16 @@ module.exports = (router, db) => {
     console.log(`A OK to send!`);
     // send it thru
     fetch(process.env.SLACK_WEBHOOK_SWIRL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        }
-        body: JSON.stringify({
-            message: req.body.message,
-            name: req.body.name
-        })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: req.body.message,
+        name: req.body.name,
+      }),
     }).then((r) => {
-        res.redirect("https://app.slack.com/client/T0266FRGM/C08M0GFCRGA")
-    })
+      res.redirect("https://app.slack.com/client/T0266FRGM/C08M0GFCRGA");
+    });
   });
 };
