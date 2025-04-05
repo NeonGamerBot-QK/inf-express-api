@@ -15,7 +15,7 @@ module.exports = (router, db) => {
     console.log(req.body);
     if (!req.body.captcha_id) {
       const captchaID = await fetch(
-        "https://api-for-rpiysws.saahild.com/captcha/"
+        "https://api-for-rpiysws.saahild.com/captcha/",
       )
         .then((r) => r.json())
         .then((d) => d.id);
@@ -30,7 +30,7 @@ module.exports = (router, db) => {
             <input type="hidden" name="captcha_id" value="${captchaID}" />
             ${Object.entries(req.body)
               .map(
-                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`
+                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`,
               )
               .join("\n")}
               <button type="submit">submit</button>
@@ -46,7 +46,7 @@ module.exports = (router, db) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: req.body["captcha-code"] }),
-      }
+      },
     );
     if (validation.status !== "200") {
       return res.send(`<html>
@@ -61,7 +61,7 @@ module.exports = (router, db) => {
             ${Object.entries(req.body)
               .filter(([k]) => !k.startsWith("captcha"))
               .map(
-                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`
+                ([k, v]) => `<input type="hidden" name="${k}" value="${v}" />`,
               )
               .join("\n")}
               <button type="submit">submit</button>
