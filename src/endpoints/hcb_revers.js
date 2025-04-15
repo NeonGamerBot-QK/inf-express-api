@@ -106,10 +106,12 @@ module.exports = (router, db) => {
   });
   // https://github.com/transcental/SlackHCBGranter/blob/main/slackhcbgranter/utils/hcb/grants.py
   router.post("/grant", async (req, res) => {
-    if (req.headers["authorization"] !== process.env.HM_MASTER_KEY)
-      const creds = await db.get("oauth2_creds")
-    if(!creds) return res.status(503).json({ message: "no creds >:3"})
+    if (req.headers["authorization"] !== process.env.HM_MASTER_KEY) {
       return res.status(400).end("BAD KEY");
+    }
+      const creds = await db.get("oauth2_creds")
+      
+    if(!creds) return res.status(503).json({ message: "no creds >:3"})
     const {
       org,
       email,
