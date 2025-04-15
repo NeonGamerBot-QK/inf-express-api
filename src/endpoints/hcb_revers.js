@@ -24,6 +24,58 @@ module.exports = (router, db) => {
       .then((r) => r.json())
       .then((json) => res.json(json));
   });
+  router.get("/callback", async (req, res) => {
+    const code = req.query.code;
+    if (!code) {
+      return res.status(400).end(`No code??!`);
+    }
+    const yummyAuthData = await fetch(
+      `https://hcb.hackclub.com/api/v4/oauth/token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          client_id: process.env.HM_HCB_CLIENT_ID,
+          client_secret: process.env.HM_HCB_CLIENT_SECRET,
+          code: code,
+          grant_type: "authorization_code",
+          redirect_uri: process.env.HM_HCB_CLIENT_URI,
+        }),
+      }
+    ).then((r) => r.json());
+    console.log(yummyAuthData);
+    if (yummyAuthData.error) {
+      return res.status(500).json({
+        error: yummyAuthData.error_description,
+        code: yummyAuthData.error,
+      });
+    }
+    const userData = await fetch(
+      `https://` + "hcb.hackclub.com" + "/api/v4/user",
+      {
+        headers: {
+          Authorization: `Bearer ${yummyAuthData.access_token}`,
+        },
+      }
+    ).then((r) => r.json());
+    console.log(userData, yummyAuthData);
+
+    if (userData.error) {
+      return res.status(500).json({ error: userData.error });
+    }
+    res.json({ userData, yummyAuthData });
+  });
+  router.get("/login", (req, res) => {
+    res.redirect(
+      `https://hcb.hackclub.com/api/v4/oauth/authorize?client_id=${
+        process.env.HM_HCB_CLIENT_ID
+      }&redirect_uri=${
+        process.env.HM_HCB_CLIENT_URI
+      }&response_type=code&scope=${encodeURIComponent("read write")}`
+    );
+  });
   // https://github.com/transcental/SlackHCBGranter/blob/main/slackhcbgranter/utils/hcb/grants.py
   router.post("/grant", async (req, res) => {
     if (req.headers["authorization"] !== process.env.HM_MASTER_KEY)
