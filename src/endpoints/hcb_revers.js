@@ -24,6 +24,21 @@ module.exports = (router, db) => {
       .then((r) => r.json())
       .then((json) => res.json(json));
   });
+  // https://github.com/transcental/SlackHCBGranter/blob/main/slackhcbgranter/utils/hcb/grants.py
+  router.post("/grant", async (req, res) => {
+    if (req.headers["authorization"] !== process.env.HM_MASTER_KEY)
+      return res.status(400).end("BAD KEY");
+    const {
+      org,
+      email,
+      amount,
+      purpose,
+      merchant_id,
+      merchant_cats,
+      merchant_regex,
+    } = req.body;
+    res.send("OK SENT");
+  });
 };
 module.exports.socket_handle = (socket, io, db) => {
   socket.emit("ping");
