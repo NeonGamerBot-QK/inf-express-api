@@ -1,33 +1,36 @@
 // default template
 module.exports = (router, db) => {
-  setInterval(async () => {
-    const creds = await db.get("oauth2_creds");
-    if (creds) {
-      const response = await fetch(
-        "https://hcb.hackclub.com/api/v4/oauth/token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+  setInterval(
+    async () => {
+      const creds = await db.get("oauth2_creds");
+      if (creds) {
+        const response = await fetch(
+          "https://hcb.hackclub.com/api/v4/oauth/token",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              client_id: process.env.HM_HCB_CLIENT_ID,
+              client_secret: process.env.HM_HCB_CLIENT_SECRET,
+              refresh_token: creds.refresh_token,
+              grant_type: "refresh_token",
+              redirect_uri: "https://hackclub.com",
+            }),
           },
-          body: new URLSearchParams({
-            client_id: process.env.HM_HCB_CLIENT_ID,
-            client_secret: process.env.HM_HCB_CLIENT_SECRET,
-            refresh_token: creds.refresh_token,
-            grant_type: "refresh_token",
-            redirect_uri: "https://hackclub.com",
-          }),
-        }
-      )
-        .then((d) => {
-          console.log(`Meow guess what it worked`);
-          return d.json();
-        })
-        .then((json) => {
-          db.set(`oauth2_creds`, json);
-        });
-    }
-  }, 60 * 1000 * 60);
+        )
+          .then((d) => {
+            console.log(`Meow guess what it worked`);
+            return d.json();
+          })
+          .then((json) => {
+            db.set(`oauth2_creds`, json);
+          });
+      }
+    },
+    60 * 1000 * 60,
+  );
   router.get("/:slug/available", (req, res) => {
     fetch("https://hcb.hackclub.com/capture-the-flag/validate_slug", {
       headers: {
@@ -71,7 +74,7 @@ module.exports = (router, db) => {
           grant_type: "authorization_code",
           redirect_uri: process.env.HM_HCB_CLIENT_URI,
         }),
-      }
+      },
     ).then((r) => r.json());
     console.log(yummyAuthData);
     if (yummyAuthData.error) {
@@ -86,7 +89,7 @@ module.exports = (router, db) => {
         headers: {
           Authorization: `Bearer ${yummyAuthData.access_token}`,
         },
-      }
+      },
     ).then((r) => r.json());
     console.log(userData, yummyAuthData);
 
@@ -106,7 +109,7 @@ module.exports = (router, db) => {
         process.env.HM_HCB_CLIENT_ID
       }&redirect_uri=${
         process.env.HM_HCB_CLIENT_URI
-      }&response_type=code&scope=${encodeURIComponent("read write")}`
+      }&response_type=code&scope=${encodeURIComponent("read write")}`,
     );
   });
   // https://github.com/transcental/SlackHCBGranter/blob/main/slackhcbgranter/utils/hcb/grants.py
