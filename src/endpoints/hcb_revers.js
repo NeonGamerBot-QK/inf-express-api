@@ -43,7 +43,7 @@ module.exports = (router, db) => {
           grant_type: "authorization_code",
           redirect_uri: process.env.HM_HCB_CLIENT_URI,
         }),
-      }
+      },
     ).then((r) => r.json());
     console.log(yummyAuthData);
     if (yummyAuthData.error) {
@@ -58,7 +58,7 @@ module.exports = (router, db) => {
         headers: {
           Authorization: `Bearer ${yummyAuthData.access_token}`,
         },
-      }
+      },
     ).then((r) => r.json());
     console.log(userData, yummyAuthData);
 
@@ -73,7 +73,7 @@ module.exports = (router, db) => {
         process.env.HM_HCB_CLIENT_ID
       }&redirect_uri=${
         process.env.HM_HCB_CLIENT_URI
-      }&response_type=code&scope=${encodeURIComponent("read write")}`
+      }&response_type=code&scope=${encodeURIComponent("read write")}`,
     );
   });
   // https://github.com/transcental/SlackHCBGranter/blob/main/slackhcbgranter/utils/hcb/grants.py
