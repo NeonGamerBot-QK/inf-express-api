@@ -61,4 +61,7 @@ module.exports = (router, db) => {
       res.status(500).send("OAuth callback error");
     }
   });
+  router.post("/vote", rateLimit({ windowMs: 5000, limit: 3 }), async (req,res) => {
+    res.send("hey uhh this isnt done yet....")
+  })
 }
