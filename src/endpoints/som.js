@@ -65,7 +65,7 @@ module.exports = (router, db) => {
         afterInstallation: async (r) => {
           console.log(r);
           await db.set("user_" + r.user.id, r.user);
-          await db.set("user_"+r.user.token, r.user)
+          await db.set("user_" + r.user.token, r.user);
           res.send(
             "Slack OAuth completed successfully! please copy and paste this xoxp: " +
               r.user.token,
@@ -74,8 +74,6 @@ module.exports = (router, db) => {
       });
       console.log("OAuth response:", response, req.session);
       // await slackInstaller.authorize({ })
-
-   
     } catch (error) {
       console.error("OAuth callback error:", error);
       res.status(500).send("OAuth callback error");
