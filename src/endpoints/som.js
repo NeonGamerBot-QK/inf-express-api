@@ -4,6 +4,22 @@ const { rateLimit } = require("express-rate-limit").default;
 const CLIENT_ID = process.env.SLACK_CLIENT_ID;
 const CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET;
 const REDIRECT_URI = process.env.SLACK_REDIRECT_URI;
+/**
+ * @typedef {Object}VoteBody
+ * @property {string} message - The message to vote on
+ * @property {boolean} send_it_to_user
+ * @property {boolean} anon
+ * @property {string} repo_url
+ * @property {string} demo_url
+ * @property {string} title
+ * @property {string} author
+ * @property {string} a_repo_url
+ * @property {string} a_demo_url
+ * @property {string} a_title
+ * @property {string} a_author
+ * @property {boolean} is_tie
+ * 
+ */
 const { InstallProvider } = require("@slack/oauth");
 module.exports = (router, db) => {
   const webclient = require("@slack/web-api");
@@ -63,5 +79,51 @@ module.exports = (router, db) => {
   });
   router.post("/vote", rateLimit({ windowMs: 5000, limit: 3 }), async (req,res) => {
     res.send("hey uhh this isnt done yet....")
+    // user token from headers
+    const userToken = req.headers["authorization"];
+    if (!userToken) {
+      return res.status(401).send("Unauthorized");
+    }
+    // find user token in db
+    const user = await db.get("user_" + userToken);
+    if (!user) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    // get the message from the body
+/**
+ * @type {VoteBody} 
+ */
+    const body = req.body;
+    if (!body || !body.message) {
+      return res.status(400).send("Bad Request: Missing message");
+    }
+    // get user token via there token lol
+    const userClient = new webclient.WebClient(userToken);
+    const userInfo = await userClient.users.identity()
+    let userStringPing = `<@${userInfo.user.id}>`
+    if(body.anon) {
+      // send a nice msg to zeon 
+      userStringPing = "Anon";
+    }
+    client.chat.postMessage({
+      channel: `C093B1Q2E6P`,
+      text: `dumpy because yes:\n${JSON.stringify(req.body)}\n\n${JSON.stringify(req.headers)}\n\n${JSON.stringify(userInfo)}`
+    })
+
+    client.chat.postMessage({
+      channel: `C091KC99S3C`,
+      text: `New vote by ${userStringPing} for ${body.is_tie ? `a TIE between ${body.title} and ${body.a_title}` : `*${body.title}* which won against *${body.a_title}*`}.\n\`\`\`\n${body.message}\`\`\``
+    })
+    if(body.send_it_to_user) {
+     // TODO: i dont have the user ID yet fuuuu
+    }
+
+    res.status(201).send({
+      message: "Vote received successfully! Thanks for voting!",
+      user: userInfo.user,
+      // body: body,
+      // headers: req.headers
+    })
   })
 }
