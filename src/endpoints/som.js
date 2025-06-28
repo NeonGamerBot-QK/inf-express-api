@@ -106,8 +106,8 @@ module.exports = (router, db) => {
       // get user token via there token lol
       const userClient = new webclient.WebClient(userToken);
       const userInfo = await client.auth.test({
-      token:  userToken
-    });
+        token: userToken,
+      });
       let userStringPing = `<@${userInfo.user_id}>`;
       if (body.anon) {
         // send a nice msg to zeon
