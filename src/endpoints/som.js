@@ -65,10 +65,10 @@ module.exports = (router, db) => {
         afterInstallation: async (r) => {
           console.log(r);
           await db.set("user_" + r.user.id, r.user);
-         res.send(
-        "Slack OAuth completed successfully! please copy and paste this xoxp: " +
-          response.accessToken,
-      );
+          res.send(
+            "Slack OAuth completed successfully! please copy and paste this xoxp: " +
+              response.accessToken,
+          );
         },
       });
       console.log("OAuth response:", response, req.session);
