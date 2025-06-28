@@ -67,7 +67,7 @@ module.exports = (router, db) => {
           await db.set("user_" + r.user.id, r.user);
           res.send(
             "Slack OAuth completed successfully! please copy and paste this xoxp: " +
-              response.accessToken,
+              r.user.accessToken,
           );
         },
       });
