@@ -84,7 +84,7 @@ module.exports = (router, db) => {
     "/vote",
     rateLimit({ windowMs: 5000, limit: 3 }),
     async (req, res) => {
-    //  res.send("hey uhh this isnt done yet....");
+      //  res.send("hey uhh this isnt done yet....");
       // user token from headers
       const userToken = req.headers["authorization"];
       if (!userToken) {
