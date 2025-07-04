@@ -2,6 +2,19 @@
 const webclient = require("@slack/web-api");
 const client = new webclient.WebClient(process.env.SLACK_ZEON_TOKEN);
 module.exports = (router, db) => {
+      router.get('/healthcheck', async (req,res) => {
+try {
+    await db.set(Date.now().toString().slice(0,4), 1)
+    await db.get(Date.now().toString().slice(0,4))
+    await db.delete(Date.now().toString().slice(0,4))
+            res.send({
+            status: 200,
+            message: 'OK',
+        })
+} catch (e) {
+    res.status(500).send({ message: e.message })
+}
+    })
   router.all("/", (req, res) => res.json("Hello, world!"));
   router.post("/share_server", async (req, res) => {
     const { ip, username, password } = req.body;
