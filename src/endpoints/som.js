@@ -22,7 +22,6 @@ const REDIRECT_URI = process.env.SLACK_REDIRECT_URI;
  */
 const { InstallProvider } = require("@slack/oauth");
 module.exports = (router, db) => {
-
   const webclient = require("@slack/web-api");
   const client = new webclient.WebClient(process.env.SLACK_ZEON_TOKEN);
   const slackInstaller = new InstallProvider({
@@ -32,19 +31,19 @@ module.exports = (router, db) => {
     // stateSecret: "random-secret-", // Use a secure random string
     redirectUri: process.env.SLACK_REDIRECT_URI,
   });
-    router.get('/healthcheck', async (req,res) => {
-try {
-    await db.set(Date.now().toString().slice(0,4), 1)
-    await db.get(Date.now().toString().slice(0,4))
-    await db.delete(Date.now().toString().slice(0,4))
-            res.send({
-            status: 200,
-            message: 'OK',
-        })
-} catch (e) {
-    res.status(500).send({ message: e.message })
-}
-    })
+  router.get("/healthcheck", async (req, res) => {
+    try {
+      await db.set(Date.now().toString().slice(0, 4), 1);
+      await db.get(Date.now().toString().slice(0, 4));
+      await db.delete(Date.now().toString().slice(0, 4));
+      res.send({
+        status: 200,
+        message: "OK",
+      });
+    } catch (e) {
+      res.status(500).send({ message: e.message });
+    }
+  });
   router.get("/slack/oauth", async (req, res) => {
     try {
       const state = "random-secret-";
