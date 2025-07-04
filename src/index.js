@@ -31,7 +31,7 @@ app.use(
   }),
 );
 const cmds = new Map();
-const generatedChecks = []
+const generatedChecks = [];
 // app.set('view engine', 'ejs')
 // app.set('views', path.join(__dirname, 'views'))
 app.get("/", (req, res) => {
@@ -79,15 +79,18 @@ for (const file of fs.readdirSync(path.join(__dirname, "endpoints"))) {
     protocol: "https",
     host: "api.saahild.com",
     path: `/api/${name}/healthcheck`,
-    port:"443"
-  })
+    port: "443",
+  });
   app.use(`/api/${name}`, router);
 }
-app.get('/status', expressStatus({
-  title: "API status",
-websocket: io,
-healthChecks: generatedChecks
-}))
+app.get(
+  "/status",
+  expressStatus({
+    title: "API status",
+    websocket: io,
+    healthChecks: generatedChecks,
+  }),
+);
 
 // The error handler must be registered before any other error middleware and after all controllers
 Sentry.setupExpressErrorHandler(app);
