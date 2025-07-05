@@ -145,8 +145,8 @@ module.exports = (router, db) => {
             .then((d) => d.json())
             .then((d) => {
               console.log(d);
-              console.log(d.results[0].slack_id)
-return              d.results[0].slack_id;
+              console.log(d.results[0].slack_id);
+              return d.results[0].slack_id;
             }));
         cacheMapForAuthors[body.title] = authorId;
         if (body.anon) {
