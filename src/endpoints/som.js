@@ -140,10 +140,13 @@ module.exports = (router, db) => {
         const authorId =
           cacheMapForAuthors[body.title] ||
           (await fetch(
-            `https://somps.alimad.xyz/api/search?q${encodeURIComponent(body.title)}&authorization=BananaIsAmazing`,
+            `https://somps.alimad.xyz/api/search?q=${encodeURIComponent(body.title)}&authorization=BananaIsAmazing`,
           )
             .then((d) => d.json())
-            .then((d) => d.results[0].slack_id));
+            .then((d) => {
+            console.log(d)
+              d.results[0].slack_id
+            }));
         cacheMapForAuthors[body.title] = authorId;
         if (body.anon) {
           // abuse aint funny buddy  - u try to abuse it, i knock ur socks off.
