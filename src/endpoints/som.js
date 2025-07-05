@@ -91,9 +91,10 @@ module.exports = (router, db) => {
       res.status(500).send("OAuth callback error");
     }
   });
+  const cacheMapForAuthors = {}
   router.post(
     "/vote",
-    rateLimit({ windowMs: 5000, limit: 3 }),
+    rateLimit({ windowMs: 1000, limit: 3 }),
     async (req, res) => {
       //  res.send("hey uhh this isnt done yet....");
       // user token from headers
@@ -134,8 +135,22 @@ module.exports = (router, db) => {
         channel: `C091KC99S3C`,
         text: `New vote by ${userStringPing} for ${body.is_tie ? `a TIE between ${body.title} and ${body.a_title}` : `*${body.title}* which won against *${body.a_title}*`}.\n\`\`\`\n${body.message}\`\`\``,
       });
-      if (body.send_it_to_user) {
-        // TODO: i dont have the user ID yet fuuuu
+      if (body.send_it_to_user && !body.is_tie) {
+        // ignore the public api key im to lazy
+        const authorId = cacheMapForAuthors[body.title] || await fetch(`https://somps.alimad.xyz/api/search?q${encodeURIComponent(body.title)}&authorization=BananaIsAmazing`).then(d=>d.json()).then(d=>d.results[0].slack_id) 
+        cacheMapForAuthors[body.title] = authorId;
+        if(body.anon) {
+          // abuse aint funny buddy  - u try to abuse it, i knock ur socks off.
+         client.chat.postMessage({
+          channel: authorId,
+          text: `Hey there someone anon wanted to send you the feedback for you work on your ship called: ${body.title},\n\`\`\`${body.message}\`\`\``
+          })
+        } else {
+          userClient.chat.postMessage({
+            channel: authorId,
+            text: `Hey there i wanted to send you the feedback for your work on your ship called: ${body.title}, (i also just voted for it)\n\`\`\`${body.message}\`\`\``,
+          });
+        }
       }
 
       res.status(201).send({
