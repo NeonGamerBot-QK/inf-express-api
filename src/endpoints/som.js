@@ -153,12 +153,12 @@ module.exports = (router, db) => {
           // abuse aint funny buddy  - u try to abuse it, i knock ur socks off.
           client.chat.postMessage({
             channel: authorId,
-            text: `Hey there someone anon wanted to send you the feedback for you work on your ship called: ${body.title},\n\`\`\`${body.message}\`\`\``,
+            text: `Hey there someone anon wanted to send you the feedback for you work on your ship called: ${body.title},\n\`\`\`${body.message}\`\`\`\n(this message was sent via <#C091KC99S3C>)`,
           });
         } else {
           userClient.chat.postMessage({
             channel: authorId,
-            text: `Hey there i wanted to send you the feedback for your work on your ship called: ${body.title}, (i also just voted for it)\n\`\`\`${body.message}\`\`\``,
+            text: `Hey there i wanted to send you the feedback for your work on your ship called: ${body.title}, (i also just voted for it)\n\`\`\`${body.message}\`\`\`\n(this message was sent via <#C091KC99S3C>)`,
           });
         }
       }
