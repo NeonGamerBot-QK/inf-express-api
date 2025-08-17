@@ -149,7 +149,7 @@ module.exports = (router, db) => {
         row.insertCell(1).textContent = t.url;
         row.insertCell(2).textContent = t.active;
         row.insertCell(3).textContent = t.pinned;
-        row.insertCell(4).textContent = formatTime(t.lastAccessed));
+        row.insertCell(4).textContent = formatTime(t.lastAccessed);
       });
     }
     renderTabs();
