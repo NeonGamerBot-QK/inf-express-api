@@ -109,7 +109,7 @@ module.exports = (router, db) => {
     new Chart(document.getElementById('cpu-chart'), {
       type: 'bar',
       data: {
-        labels: cpuUsages.map((_,i)=>\`Core \${i+1}\`),
+        labels: cpuUsages.map((_,i)=>"Core "+(i+1)),
         datasets: [{ label: 'CPU Usage %', data: cpuUsages, backgroundColor: cpuUsages.map(u=>u>80?'red':'#4caf50') }]
       },
       options: { scales: { y: { beginAtZero: true, max: 100 } } }
