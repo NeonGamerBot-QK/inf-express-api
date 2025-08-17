@@ -29,7 +29,7 @@ module.exports = (router, db) => {
       res.status(500).send({ message: e.message });
     }
   });
-  router.get('/dashboard-client', async (req, res) => {
+  router.get("/dashboard-client", async (req, res) => {
     const clientId = req.query.client || 0;
     const clients = (await db.get("clients")) || [];
     const clientInfo = clients[clientId] || {};
@@ -103,8 +103,8 @@ module.exports = (router, db) => {
   </script>
 </body>
 </html>
-`)
-  })
+`);
+  });
 };
 module.exports.socket_handle = async (socket, io, db) => {
   (async () => {
