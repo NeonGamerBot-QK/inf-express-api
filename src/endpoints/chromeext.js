@@ -36,73 +36,129 @@ module.exports = (router, db) => {
     res.send(`<!DOCTYPE html>
 <html>
 <head>
-  <title>Client Stats</title>
+  <title>Client Stats Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
     h2 { margin-top: 30px; }
-    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-    th { background-color: #f4f4f4; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #eee; cursor: pointer; }
+    .alert { color: red; font-weight: bold; }
+    .feature { display: inline-block; margin-right: 10px; padding: 4px 8px; background: #ddd; border-radius: 4px; }
+    .feature.active { background: #4caf50; color: white; }
+    .charts { display: flex; gap: 40px; flex-wrap: wrap; }
+    canvas { background: #fff; border-radius: 8px; padding: 10px; }
+    #tab-search { margin-bottom: 10px; padding: 5px; width: 300px; }
   </style>
 </head>
 <body>
-  <h1>Client Stats</h1>
+  <h1>Client Stats Dashboard</h1>
 
   <h2>CPU</h2>
   <p>Model: <span id="cpu-model"></span></p>
   <p>Architecture: <span id="cpu-arch"></span></p>
   <p>Average Usage: <span id="cpu-usage"></span>%</p>
-  <p>Features: <span id="cpu-features"></span></p>
+  <div id="cpu-alert" class="alert"></div>
+  <div id="cpu-features"></div>
+  <canvas id="cpu-chart" width="400" height="150"></canvas>
 
   <h2>Memory</h2>
   <p>Used: <span id="mem-used"></span> / Total: <span id="mem-total"></span></p>
+  <div id="mem-alert" class="alert"></div>
+  <canvas id="mem-chart" width="200" height="200"></canvas>
 
   <h2>Storage</h2>
-  <table id="storage-table">
-    <tr><th>Name</th><th>Type</th><th>Capacity</th></tr>
-  </table>
+  <div id="storage-alert" class="alert"></div>
+  <canvas id="storage-chart" width="200" height="200"></canvas>
 
   <h2>Browser Tabs</h2>
+  <input type="text" id="tab-search" placeholder="Search tabs...">
   <table id="tabs-table">
-    <tr><th>Title</th><th>URL</th><th>Active</th><th>Pinned</th></tr>
+    <thead>
+      <tr><th>Title</th><th>URL</th><th>Active</th><th>Pinned</th><th>Last Accessed</th></tr>
+    </thead>
+    <tbody></tbody>
   </table>
 
   <script>
-    const data = ${JSON.stringify(clientInfo)}; // replace with your JSON
+    const data = ${JSON.stringify(clientInfo)}; // Replace with your JSON
+
+    // Helpers
+    const toGB = b => (b / (1024**3)).toFixed(2) + ' GB';
+    const formatTime = ms => new Date(ms).toLocaleString();
 
     // CPU
     document.getElementById('cpu-model').textContent = data.stats.cpu.modelName;
     document.getElementById('cpu-arch').textContent = data.stats.cpu.archName;
-    const avgCpuUsage = data.stats.cpu.processors.reduce((sum, p) => sum + (1 - p.usage.idle / p.usage.total) * 100, 0) / data.stats.cpu.processors.length;
+    const cpuUsages = data.stats.cpu.processors.map(p => (1 - p.usage.idle / p.usage.total) * 100);
+    const avgCpuUsage = cpuUsages.reduce((a,b)=>a+b,0)/cpuUsages.length;
     document.getElementById('cpu-usage').textContent = avgCpuUsage.toFixed(2);
-    document.getElementById('cpu-features').textContent = data.stats.cpu.features.join(', ');
+    if (avgCpuUsage > 80) document.getElementById('cpu-alert').textContent = "High CPU usage! ⚠️";
+
+    // CPU Features
+    const featuresDiv = document.getElementById('cpu-features');
+    data.stats.cpu.features.forEach(f => {
+      const span = document.createElement('span');
+      span.textContent = f;
+      span.className = 'feature active';
+      featuresDiv.appendChild(span);
+    });
+
+    // CPU chart per core
+    new Chart(document.getElementById('cpu-chart'), {
+      type: 'bar',
+      data: {
+        labels: cpuUsages.map((_,i)=>\`Core \${i+1}\`),
+        datasets: [{ label: 'CPU Usage %', data: cpuUsages, backgroundColor: cpuUsages.map(u=>u>80?'red':'#4caf50') }]
+      },
+      options: { scales: { y: { beginAtZero: true, max: 100 } } }
+    });
 
     // Memory
-    const toGB = b => (b / (1024**3)).toFixed(2) + ' GB';
-    document.getElementById('mem-used').textContent = toGB(data.stats.memory.capacity - data.stats.memory.availableCapacity);
+    const memUsed = data.stats.memory.capacity - data.stats.memory.availableCapacity;
+    document.getElementById('mem-used').textContent = toGB(memUsed);
     document.getElementById('mem-total').textContent = toGB(data.stats.memory.capacity);
+    if (data.stats.memory.availableCapacity < 1024*1024*1024) document.getElementById('mem-alert').textContent = "Low memory! ⚠️";
 
-    // Storage
-    const storageTable = document.getElementById('storage-table');
-    data.stats.storage.forEach(s => {
-      const row = storageTable.insertRow();
-      row.insertCell(0).textContent = s.name;
-      row.insertCell(1).textContent = s.type;
-      row.insertCell(2).textContent = toGB(s.capacity);
+    // Memory pie chart
+    new Chart(document.getElementById('mem-chart'), {
+      type: 'pie',
+      data: {
+        labels: ['Used', 'Available'],
+        datasets: [{ data: [memUsed, data.stats.memory.availableCapacity], backgroundColor: ['#4caf50','#ddd'] }]
+      }
     });
 
-    // Browser tabs
-    const tabsTable = document.getElementById('tabs-table');
-    data.tabs.forEach(t => {
-      const row = tabsTable.insertRow();
-      row.insertCell(0).textContent = t.title;
-      row.insertCell(1).textContent = t.url;
-      row.insertCell(2).textContent = t.active;
-      row.insertCell(3).textContent = t.pinned;
+    // Storage chart
+    const storageLabels = data.stats.storage.map(s=>s.name);
+    const storageData = data.stats.storage.map(s=>s.capacity);
+    new Chart(document.getElementById('storage-chart'), {
+      type: 'pie',
+      data: { labels: storageLabels, datasets: [{ data: storageData, backgroundColor: storageData.map(c=>c>0.9*Math.max(...storageData)?'red':'#2196f3') }] }
     });
+    data.stats.storage.forEach(s=>{ if(s.capacity/1024**3 > 200) document.getElementById('storage-alert').textContent = "Storage nearly full! ⚠️"; });
+
+    // Tabs
+    const tabsTbody = document.querySelector('#tabs-table tbody');
+    function renderTabs(filter='') {
+      tabsTbody.innerHTML = '';
+      data.tabs.filter(t => t.title.toLowerCase().includes(filter.toLowerCase())).forEach(t => {
+        const row = tabsTbody.insertRow();
+        row.insertCell(0).textContent = t.title;
+        row.insertCell(1).textContent = t.url;
+        row.insertCell(2).textContent = t.active;
+        row.insertCell(3).textContent = t.pinned;
+        row.insertCell(4).textContent = formatTime(t.lastAccessed));
+      });
+    }
+    renderTabs();
+    document.getElementById('tab-search').addEventListener('input', e => renderTabs(e.target.value));
+
   </script>
 </body>
 </html>
+
 `);
   });
 };
