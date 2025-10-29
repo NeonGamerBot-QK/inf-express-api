@@ -1,5 +1,5 @@
 onlyBuiltDependencies:
-  - '@sentry/profiling-node'
+  - "@sentry/profiling-node"
   - canvas
   - event-loop-stats
   - protobufjs
