@@ -52,8 +52,9 @@ for (const file of fs.readdirSync(path.join(__dirname, "endpoints"))) {
   }
 
   const postgresStore = new KeyvPostgres({
-    uri: process.env.DB_SQL_URI || process.env.DATABASE_URL || process.env.DB_URI,
-    table: name.replace(/-/g, '_')
+    uri:
+      process.env.DB_SQL_URI || process.env.DATABASE_URL || process.env.DB_URI,
+    table: name.replace(/-/g, "_"),
   });
   const db = new Keyv({ store: postgresStore, namespace: name });
   db.on("error", (err) => console.error(`[${name}] Connection error: ${err}`));
@@ -73,7 +74,7 @@ for (const file of fs.readdirSync(path.join(__dirname, "endpoints"))) {
     if (endpoint.socket_handle) {
       cmds.set(name, endpoint);
     }
-  } catch (e) { }
+  } catch (e) {}
   endpoints.set(name, {
     db,
     name,
