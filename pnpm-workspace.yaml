@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - '@sentry/profiling-node'
+  - canvas
+  - event-loop-stats
+  - protobufjs
+  - sqlite3
