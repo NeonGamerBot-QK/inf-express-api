@@ -37,7 +37,7 @@ module.exports = (router, db) => {
   });
   router.get("/messages_to_send", async (req, res) => {
     console.log(await db.get(`messages_to_send`));
-    res.json((await db.get(`messages_to_send`)) || []);
+    res.json(JSON.parse(await db.get(`messages_to_send`)) || "[]");
   });
   router.post(`/send_message`, async (req, res) => {
     const oldInstance = (await db.get(`messages_to_send`)) || [];
