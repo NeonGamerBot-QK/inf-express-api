@@ -36,14 +36,14 @@ module.exports = (router, db) => {
     next();
   });
   router.get("/messages_to_send", async (req, res) => {
-try {
+    try {
       console.log(await db.get(`messages_to_send`));
-    res.json(
-      JSON.parse((await db.get(`messages_to_send`)) || "{value:[]}").value,
-    );
-} catch (e) {
-  res.json([])
-}
+      res.json(
+        JSON.parse((await db.get(`messages_to_send`)) || "{value:[]}").value,
+      );
+    } catch (e) {
+      res.json([]);
+    }
   });
   router.post(`/send_message`, async (req, res) => {
     const oldInstance = (await db.get(`messages_to_send`)) || [];
