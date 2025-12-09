@@ -7,7 +7,7 @@ function authed(req, res, next) {
 module.exports = (router, db) => {
   // router.all('/', (req,res) => res.send('Hello, world!'))
   router.get("/random", async (req, res) => {
-    const quotes = (await db.get("quotes")) || [];
+    const quotes = JSON.parse(await db.get("quotes")).value || [];
     res.json({ quote: quotes[Math.floor(Math.random() * quotes.length)] });
   });
   router.delete("/clear", authed, async (req, res) => {
