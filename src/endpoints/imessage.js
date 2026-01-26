@@ -68,11 +68,14 @@ module.exports = (router, db) => {
   // yes
   router.post(`/receive`, async (req, res) => {
     const stored = await db.get(`messages_recived`);
-    const oldInstance = stored
-      ? typeof stored === "string"
-        ? JSON.parse(stored)
-        : stored
-      : [];
+    console.log("stored messages_recived:", typeof stored, stored);
+    let oldInstance = [];
+    try {
+      const parsed = stored ? (typeof stored === "string" ? JSON.parse(stored) : stored) : [];
+      oldInstance = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error("Failed to parse messages_recived:", e);
+    }
     oldInstance.push(req.body);
     db.set(`messages_recived`, oldInstance);
     for (let i = 0; i < forwardUrls.length; i++) {
