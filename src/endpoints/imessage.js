@@ -14,7 +14,8 @@ function automatedMessages(db) {
         for (const n of phonenumbers.filter((n) =>
           message.sender.includes(n),
         )) {
-          const _old = (await db.get("messages_to_send")) || [];
+          const stored = await db.get("messages_to_send");
+          const _old = stored ? (typeof stored === "string" ? JSON.parse(stored) : stored) : [];
           _old.push({
             message: signalMessage,
             to: n,
@@ -46,7 +47,9 @@ module.exports = (router, db) => {
     }
   });
   router.post(`/send_message`, async (req, res) => {
-    const oldInstance = (await db.get(`messages_to_send`)) || [];
+    console.log(req.body);
+    const stored = await db.get(`messages_to_send`);
+    const oldInstance = stored ? (typeof stored === "string" ? JSON.parse(stored) : stored) : [];
     oldInstance.push(req.body);
     db.set(`messages_to_send`, oldInstance);
     res.status(201).json({
@@ -56,7 +59,8 @@ module.exports = (router, db) => {
   });
   // yes
   router.post(`/receive`, async (req, res) => {
-    const oldInstance = (await db.get(`messages_recived`)) || [];
+    const stored = await db.get(`messages_recived`);
+    const oldInstance = stored ? (typeof stored === "string" ? JSON.parse(stored) : stored) : [];
     oldInstance.push(req.body);
     db.set(`messages_recived`, oldInstance);
     for (let i = 0; i < forwardUrls.length; i++) {
