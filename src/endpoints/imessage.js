@@ -71,7 +71,11 @@ module.exports = (router, db) => {
     console.log("stored messages_recived:", typeof stored, stored);
     let oldInstance = [];
     try {
-      const parsed = stored ? (typeof stored === "string" ? JSON.parse(stored) : stored) : [];
+      const parsed = stored
+        ? typeof stored === "string"
+          ? JSON.parse(stored)
+          : stored
+        : [];
       oldInstance = Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       console.error("Failed to parse messages_recived:", e);
