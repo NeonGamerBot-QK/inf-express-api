@@ -1,13 +1,15 @@
-function authed(req, res, next) {
-  if (!req.query.a == process.env.IMESSAGE_TOKEN)
-    return res.status(401).json({ invalid: true, quote: '"no auth" - Neon' });
-  next();
-}
+const { requireBearer } = require("../modules/auth");
+
+/**
+ * Authentication middleware for quotes endpoints.
+ * Uses Bearer token from Authorization header for security.
+ */
+const authed = requireBearer("IMESSAGE_TOKEN");
 // default template
 module.exports = (router, db) => {
   // router.all('/', (req,res) => res.send('Hello, world!'))
   router.get("/random", async (req, res) => {
-    const quotes = JSON.parse(await db.get("quotes")).value || [];
+    const quotes = (await db.get("quotes")) || [];
     res.json({ quote: quotes[Math.floor(Math.random() * quotes.length)] });
   });
   router.delete("/clear", authed, async (req, res) => {

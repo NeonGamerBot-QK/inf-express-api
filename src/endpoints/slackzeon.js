@@ -1,7 +1,12 @@
 // default template
 const webclient = require("@slack/web-api");
+const { requireBearer } = require("../modules/auth");
 const client = new webclient.WebClient(process.env.SLACK_ZEON_TOKEN);
+
 module.exports = (router, db) => {
+  // Require authentication for all routes in this endpoint
+  router.use(requireBearer("SLACKZEON_API_KEY"));
+
   router.get("/healthcheck", async (req, res) => {
     try {
       await db.set(Date.now().toString().slice(0, 4), 1);
@@ -43,6 +48,16 @@ module.exports.socket_handle = (socket, io, db) => {
     });
   });
   socket.on("exec command", async (string, id) => {
+    // Security: Only allow authenticated controller sockets to execute commands
+    if (socket.data.role !== "controller") {
+      socket.emit("error", { message: "Unauthorized: controller role required" });
+      return;
+    }
+    // Validate command input
+    if (typeof string !== "string" || string.length > 500) {
+      socket.emit("error", { message: "Invalid command format" });
+      return;
+    }
     if (server) {
       server.emit("command", string, id);
     }

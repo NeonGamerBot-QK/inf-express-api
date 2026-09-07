@@ -8,7 +8,7 @@ const KeyvGzip = require("@keyv/compress-gzip");
 const KeyvPostgres = require("@keyv/postgres");
 const endpoints = new Map();
 const fs = require("fs");
-const { exec } = require("child_process");
+// const { exec } = require("child_process"); // only used by the self-restart git-pull loop below, disabled for container deploys
 const path = require("path");
 const { randomUUID } = require("crypto");
 const { createProxyMiddleware } = require("http-proxy-middleware");
@@ -24,8 +24,11 @@ app.use(express.json({ limit: "550mb" }));
 app.use(express.urlencoded({ extended: true }));
 // app.use(require('helmet')())
 app.use(require("cors")({ origin: "*" }));
+// Slack API proxy - requires authentication to prevent abuse
+const { requireBearer } = require("./modules/auth");
 app.use(
   "/api/slack",
+  requireBearer("SLACK_PROXY_KEY"),
   createProxyMiddleware({
     target: "https://slack.com/api",
     changeOrigin: true,
@@ -114,8 +117,23 @@ app.use((err, req, res, next) => {
     error: "Internal server error",
   });
 });
+// Socket.io authentication middleware
+const { safeEqual } = require("./modules/auth");
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+  const expectedToken = process.env.SOCKET_AUTH_TOKEN;
+  if (!expectedToken) {
+    console.error("[socket] Missing SOCKET_AUTH_TOKEN environment variable");
+    return next(new Error("Server misconfigured"));
+  }
+  if (!token || !safeEqual(token, expectedToken)) {
+    return next(new Error("Unauthorized"));
+  }
+  next();
+});
+
 io.on("connection", (socket) => {
-  console.log(`Connectio made to socket`);
+  console.log(`Connection made to socket`);
   const id = randomUUID().toString();
   let connectedInTime = false;
   socket.emit(
@@ -147,44 +165,47 @@ const port =
   3000;
 server.listen(port, () => {
   console.log(`Server listening on port ::${port}`);
-  setInterval(() => {
-    exec(`git pull -v`, (error, stdout) => {
-      let response = error || stdout;
-      if (!error) {
-        if (!response.includes("Already up to date.")) {
-          // client.channels.cache
-          // .get("898041843902742548")
-          // .send(`<t:${Date.now().toString().slice(0, -3)}:f> Automatic update from GitHub, pulling files.\n\`\`\`${cap(response, 1900)}\`\`\``);
-          console.log(response);
-          setTimeout(() => {
-            process.exit();
-          }, 1000);
-        }
-      }
-    });
-  }, 30000);
+  // Self-restart-on-git-pull loop disabled: containerized deploys (Coolify) rebuild
+  // and restart the whole container on redeploy, and the image has no .git/credentials
+  // to pull with. Redeploys should be triggered via Coolify's webhook/polling instead.
+  // setInterval(() => {
+  //   exec(`git pull -v`, (error, stdout) => {
+  //     let response = error || stdout;
+  //     if (!error) {
+  //       if (!response.includes("Already up to date.")) {
+  //         // client.channels.cache
+  //         // .get("898041843902742548")
+  //         // .send(`<t:${Date.now().toString().slice(0, -3)}:f> Automatic update from GitHub, pulling files.\n\`\`\`${cap(response, 1900)}\`\`\``);
+  //         console.log(response);
+  //         setTimeout(() => {
+  //           process.exit();
+  //         }, 1000);
+  //       }
+  //     }
+  //   });
+  // }, 30000);
 });
 // watch for new git files
 
-setInterval(() => {
-  exec(`git pull`, (error, stdout) => {
-    let response = error || stdout;
-    if (!error) {
-      if (!response.includes("Already up to date.")) {
-        console.log(`New git stuff wowie`);
-        console.log(response);
-        // client.channels.cache
-        //     .get("898041843902742548")
-        //     .send(`<t:${Date.now().toString().slice(0, -3)}:f> Automatic update from GitHub, pulling files.\n\`\`\`${cap(response, 1900)}\`\`\``);
-        setTimeout(() => {
-          process.exit();
-        }, 1000);
-      }
-    }
-  });
-}, 15000);
+// setInterval(() => {
+//   exec(`git pull`, (error, stdout) => {
+//     let response = error || stdout;
+//     if (!error) {
+//       if (!response.includes("Already up to date.")) {
+//         console.log(`New git stuff wowie`);
+//         console.log(response);
+//         // client.channels.cache
+//         //     .get("898041843902742548")
+//         //     .send(`<t:${Date.now().toString().slice(0, -3)}:f> Automatic update from GitHub, pulling files.\n\`\`\`${cap(response, 1900)}\`\`\``);
+//         setTimeout(() => {
+//           process.exit();
+//         }, 1000);
+//       }
+//     }
+//   });
+// }, 15000);
 // check this later
-process.on(`unhandledException`, (e) => {
+process.on(`uncaughtException`, (e) => {
   Sentry.captureException(e);
 });
 process.on("unhandledRejection", (reason, promise) => {

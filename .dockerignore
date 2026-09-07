@@ -1,0 +1,14 @@
+.git
+node_modules
+npm-debug.log
+yarn.lock
+yarn-error.log
+.pnp.*
+.env
+.env.*
+*.db
+ships.json
+parsed-ships.json
+old-parsed-ships.json
+quotes.json
+README.md
