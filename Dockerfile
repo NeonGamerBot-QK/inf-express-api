@@ -16,6 +16,7 @@ FROM node:20-bookworm-slim AS runtime
 # runtime shared libs needed by the compiled canvas addon
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libjpeg62-turbo libgif7 librsvg2-2 libpixman-1-0 \
+    dnsutils \
     && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
