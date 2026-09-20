@@ -20,6 +20,7 @@
     "@sentry/profiling-node": "^8.41.0",
     "@slack/oauth": "^3.0.1",
     "@slack/web-api": "^7.7.0",
+    "bcryptjs": "^2.4.3",
     "chart.js": "^3.9.1",
     "chartjs-node-canvas": "^4.1.6",
     "cors": "latest",
