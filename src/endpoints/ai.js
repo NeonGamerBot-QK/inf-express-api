@@ -1,6 +1,6 @@
 const { randomUUID, randomBytes } = require("crypto");
 const bcrypt = require("bcryptjs");
-const { createProxyMiddleware } = require("http-proxy-middleware");
+const { createProxyMiddleware, fixRequestBody } = require("http-proxy-middleware");
 const { requireBearer } = require("../modules/auth");
 
 const BCRYPT_SALT_ROUNDS = 10;
@@ -81,6 +81,9 @@ module.exports = (router, db) => {
       target: "http://10.0.0.1:11434",
       changeOrigin: true,
       pathRewrite: { "^/ollama": "" },
+      // express.json() upstream already consumed the request stream;
+      // re-inject the parsed body so POST requests reach Ollama
+      on: { proxyReq: fixRequestBody },
     }),
   );
 
